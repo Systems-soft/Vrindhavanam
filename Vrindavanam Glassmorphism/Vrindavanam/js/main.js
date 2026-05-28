@@ -2,17 +2,26 @@
 let cart = [];
 let cartOpen = false;
 
-function addToCart(name, price, emoji) {
+function addToCart(name, price, emoji, selectId) {
+    let finalName = name;
+    if (selectId) {
+        const select = document.getElementById(selectId);
+        if (select) {
+            const selectedText = select.options[select.selectedIndex].text;
+            const weight = selectedText.split('—')[0].trim();
+            finalName = `${name} (${weight})`;
+        }
+    }
     const numPrice = parseInt(price.replace(/[^0-9]/g, ''));
-    const existing = cart.find(i => i.name === name);
+    const existing = cart.find(i => i.name === finalName);
     if (existing) {
         existing.qty++;
     } else {
-        cart.push({ name, price: numPrice, emoji, qty: 1 });
+        cart.push({ name: finalName, price: numPrice, emoji, qty: 1 });
     }
     updateCartUI();
     openCart();
-    showToast(name + ' added to cart');
+    showToast(finalName + ' added to cart');
 }
 
 function removeFromCart(name) {
@@ -30,6 +39,7 @@ function changeQty(name, delta) {
 }
 
 function getImageForProduct(name) {
+    const baseName = name.replace(/\s*\([^)]+\)$/, '');
     const map = {
         'Cardamom Reserve': 'images/plantation17.jpg',
         'Malabar Pepper': 'images/plantation14.jpg',
@@ -37,9 +47,12 @@ function getImageForProduct(name) {
         'Wild Honey Pepper Batch 3': 'images/plantation14.jpg',
         'Saffron-Touch Turmeric Batch 7': 'images/plantation16.jpg',
         'Lakadong Turmeric': 'images/plantation16.jpg',
-        'Wild Cloves': 'images/plantation13.jpg'
+        'Wild Cloves': 'images/plantation13.jpg',
+        'Organic Highland Tea': 'images/tea.jpg',
+        'Premium Estate Coffee': 'images/coffee1.jpg',
+        'Organic Forest Honey': 'images/honey.jpg'
     };
-    return map[name] || 'images/plantation 2.jpg';
+    return map[baseName] || 'images/plantation 2.jpg';
 }
 
 function updateCartUI() {
@@ -98,7 +111,7 @@ function traceSpice() {
     const batch = batchInput.value || 'VRD-2024-CRD-12';
     const product = productInput.value || 'Cardamom';
     resultBatch.textContent = batch;
-    const farms = ['Vrindavanam Estate, Idukki', 'Hillcrest Plot, Munnar', 'Mist Valley Farm, Wayanad', 'Sunrise Ridge, Thekkady'];
+    const farms = ['Vrindhavanam Estate, Idukki', 'Hillcrest Plot, Munnar', 'Mist Valley Farm, Wayanad', 'Sunrise Ridge, Thekkady'];
     const methods = ['Sun-Dried, 6 Days', 'Shade Dried, 9 Days', 'Mechanical Drying, 48hrs', 'Traditional Kiln, 4 Days'];
     farmEl.textContent = farms[Math.floor(Math.random() * farms.length)];
     dryEl.textContent = methods[Math.floor(Math.random() * methods.length)];
@@ -130,6 +143,43 @@ function showToast(msg) {
     toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+function clearProductValueLinks() {
+    document.querySelectorAll('.handpicked-tile.is-linked, .why-card.is-linked').forEach(el => {
+        el.classList.remove('is-linked');
+    });
+}
+
+function highlightProductValue(targetId, sourceCard) {
+    clearProductValueLinks();
+    const target = document.getElementById(targetId);
+
+    if (sourceCard) {
+        sourceCard.classList.add('is-linked');
+    }
+
+    if (target) {
+        target.classList.add('is-linked');
+    }
+}
+
+function connectWhyProduct(event, targetId, message) {
+    if (event) {
+        event.preventDefault();
+    }
+
+    const sourceCard = event ? event.currentTarget : null;
+    const target = document.getElementById(targetId);
+    highlightProductValue(targetId, sourceCard);
+
+    if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    if (typeof showToast === 'function' && message) {
+        showToast(message);
+    }
+}
+
 // INIT
 document.addEventListener('DOMContentLoaded', () => {
     // ENTER KEY FOR TRACE
@@ -137,4 +187,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const productInput = document.getElementById('productInput');
     if (batchInput) batchInput.addEventListener('keydown', e => { if (e.key === 'Enter') traceSpice(); });
     if (productInput) productInput.addEventListener('keydown', e => { if (e.key === 'Enter') traceSpice(); });
+
+    const productMessages = {
+        'product-honey': '100% natural and safe connects to Honey.',
+        'product-cardamom': 'Single Origin connects to Cardamom.',
+        'product-cloves': 'Sustainable connects to Cloves.',
+        'product-coffee': 'Fair Wages connects to Coffee.',
+        'product-tea': 'Farm to Door connects to Tea.',
+        'product-turmeric': 'Bio Cultures & Inputs connects to Turmeric.',
+        'product-black-pepper': 'Lab Verified connects to Black Pepper.',
+    };
+
+    document.querySelectorAll('.why-card[data-product-target]').forEach(card => {
+        const targetId = card.dataset.productTarget;
+        const connect = event => connectWhyProduct(event, targetId, productMessages[targetId]);
+
+        card.addEventListener('click', connect);
+        card.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                connect(event);
+            }
+        });
+    });
 });

@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vrindavanam Spice Co. — Heritage Spices Since 1932</title>
+    <title>Vrindhavanam Estate Heritage Since 1932 — Heritage Spices Since 1932</title>
     <meta name="description"
         content="Premium organic spices from our heritage plantation. Farm-to-table transparency, batch-traced, since 1932.">
-    <meta property="og:title" content="Vrindavanam Spice Co. — Heritage Spices Since 1932">
+    <meta property="og:title" content="Vrindhavanam Estate Heritage Since 1932 — Heritage Spices Since 1932">
     <meta property="og:description" content="Premium organic spices from our heritage plantation.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
@@ -462,6 +462,68 @@
             transform: scale(1.03);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             border-color: var(--gold);
+        }
+
+        /* FEATURED SINGLE IMAGE STYLING */
+        .featured-container {
+            position: relative;
+            max-width: 900px;
+            margin: 3rem auto 0 auto;
+            padding: 20px;
+            z-index: 2;
+        }
+
+        .featured-glow {
+            position: absolute;
+            inset: 30px;
+            background: url('images/vrindhavanam.jpg') center/cover no-repeat;
+            filter: blur(40px);
+            opacity: 0.35;
+            z-index: 0;
+            pointer-events: none;
+            border-radius: 12px;
+            transform: translateY(15px) scale(0.95);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .featured-image-wrap {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(201, 168, 76, 0.25);
+            z-index: 1;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .featured-image-wrap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.45) 100%);
+            pointer-events: none;
+            transition: background 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .featured-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.8s ease;
+        }
+
+        .featured-container:hover .featured-img {
+            transform: scale(1.03);
+        }
+
+        .featured-container:hover .featured-glow {
+            opacity: 0.5;
+            transform: translateY(20px) scale(0.98);
+        }
+
+        .featured-container:hover .featured-image-wrap::after {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.55) 100%);
         }
 
         /* SECTION STYLES */
@@ -1175,11 +1237,42 @@
             color: var(--sage);
         }
 
-        /* WHY US */
         #why {
-            background: linear-gradient(rgba(253, 251, 247, 0.9), rgba(253, 251, 247, 0.95)),
-                url('https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&q=80&w=2000') center/cover no-repeat;
-            backdrop-filter: blur(10px);
+            position: relative;
+            background: url("images/beautiful4.jpg") center/cover no-repeat;
+            z-index: 1;
+            overflow: hidden;
+            isolation: isolate;
+            filter: contrast(1.1) brightness(1.05) saturate(1.1);
+        }
+
+        #why::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            background: linear-gradient(
+                rgba(0, 0, 0, 0.25),
+                rgba(0, 0, 0, 0.45)
+            );
+            z-index: -1;
+        }
+
+        #why .section-title {
+            color: var(--gold-light) !important;
+        }
+
+        #why .section-title em {
+            color: var(--cream) !important;
+        }
+
+        #why .section-eyebrow {
+            color: rgba(212, 175, 55, 0.8) !important;
+        }
+
+        #why .section-eyebrow::before {
+            background: rgba(212, 175, 55, 0.8) !important;
         }
 
         .why-grid {
@@ -1278,6 +1371,68 @@
             transform: scale(1.04);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
             border-color: var(--gold);
+        }
+
+        /* FEATURED SINGLE IMAGE STYLING */
+        .featured-container {
+            position: relative;
+            max-width: 900px;
+            margin: 3rem auto 0 auto;
+            padding: 20px;
+            z-index: 2;
+        }
+
+        .featured-glow {
+            position: absolute;
+            inset: 30px;
+            background: url('images/vrindhavanam.jpg') center/cover no-repeat;
+            filter: blur(40px);
+            opacity: 0.35;
+            z-index: 0;
+            pointer-events: none;
+            border-radius: 12px;
+            transform: translateY(15px) scale(0.95);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .featured-image-wrap {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(201, 168, 76, 0.25);
+            z-index: 1;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .featured-image-wrap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.45) 100%);
+            pointer-events: none;
+            transition: background 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .featured-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.8s ease;
+        }
+
+        .featured-container:hover .featured-img {
+            transform: scale(1.03);
+        }
+
+        .featured-container:hover .featured-glow {
+            opacity: 0.5;
+            transform: translateY(20px) scale(0.98);
+        }
+
+        .featured-container:hover .featured-image-wrap::after {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.55) 100%);
         }
 
         /* LIMITED BATCH */
@@ -1978,14 +2133,14 @@
     <!-- NAV -->
     <nav id="navbar">
         <div class="nav-logo">
-            🌿 Vrindavanam Spice Co.
+            🌿 Vrindhavanam Estate Heritage Since 1932
             <span>Heritage Since 1932</span>
         </div>
         <ul class="nav-links">
             <li><a href="#hero">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#products">Products</a></li>
-            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#life-hills">Gallery</a></li>
             <li><a href="#why">Why Us</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
@@ -2003,7 +2158,7 @@
         <div class="hero-orb"></div>
         <div class="hero-orb"></div>
         <div class="hero-content">
-            <div class="hero-badge"><span>Certified Organic · Batch Traced · Kerala Origin</span></div>
+            <div class="hero-badge"><span>100% Natural · Kerala Origin · Plant-Based</span></div>
             <h1 class="hero-title">
                 Three Generations of<br><em>Pure Cardamom Since 1932</em>
             </h1>
@@ -2022,38 +2177,32 @@
     <!-- METRICS BAR -->
     <div class="metrics-bar">
         <div class="metric-item">
-            <div class="metric-num">75+</div>
-            <div class="metric-label">Heritage Years</div>
+            <div class="metric-num" style="font-size: 1.1rem; line-height: 1.4; font-weight: normal; font-family: 'Playfair Display', serif; max-width: 240px; margin: 0 auto;">From the Misty Highlands of Idukki to Your Kitchen.</div>
         </div>
         <div class="metric-sep"></div>
         <div class="metric-item">
-            <div class="metric-num">1200</div>
-            <div class="metric-label">Acres of Green</div>
+            <div class="metric-num" style="font-size: 1.1rem; line-height: 1.4; font-weight: normal; font-family: 'Playfair Display', serif; max-width: 240px; margin: 0 auto;">Pure Aroma. Estate-Grown Excellence.</div>
         </div>
         <div class="metric-sep"></div>
         <div class="metric-item">
-            <div class="metric-num">100%</div>
-            <div class="metric-label">Traceable</div>
+            <div class="metric-num" style="font-size: 1.1rem; line-height: 1.4; font-weight: normal; font-family: 'Playfair Display', serif; max-width: 240px; margin: 0 auto;">Handcrafted Cardamom from Kerala’s High Ranges.</div>
         </div>
         <div class="metric-sep"></div>
         <div class="metric-item">
-            <div class="metric-num">Zero</div>
-            <div class="metric-label">Additives</div>
+            <div class="metric-num" style="font-size: 1.1rem; line-height: 1.4; font-weight: normal; font-family: 'Playfair Display', serif; max-width: 240px; margin: 0 auto;">Where Tradition Meets Precision Farming.</div>
         </div>
     </div>
 
-    <!-- LIFE ON VRINDAVANAM HILLS -->
+    <!-- LIFE ON VRINDHAVANAM HILLS -->
     <section id="life-hills" class="life-gallery">
         <div class="section-eyebrow" style="justify-content: center; margin-bottom: 1rem;">Experience the Origin</div>
-        <h2>Life on Vrindavanam Hills</h2>
+        <h2>Life on Vrindhavanam Hills</h2>
 
-        <div class="gallery-grid">
-            <img src="images/plantation 2.jpg" alt="Plantation Path" loading="lazy">
-            <img src="images/plantation3.jpg" alt="Cows Grazing in Plantation" loading="lazy">
-            <img src="images/plantation6.jpg" alt="Cardamom Harvest" loading="lazy">
-            <img src="images/plantation5.jpg" alt="Cardamom Flowers Close-up" loading="lazy">
-            <img src="images/plantation7.jpg" alt="Misty Hills" loading="lazy">
-            <img src="images/plantation8.jpg" alt="Forest Plantation" loading="lazy">
+        <div class="featured-container">
+            <div class="featured-glow"></div>
+            <div class="featured-image-wrap">
+                <img src="images/vrindhavanam.jpg" alt="Life on Vrindhavanam Hills" class="featured-img" loading="lazy">
+            </div>
         </div>
     </section>
 
@@ -2082,15 +2231,15 @@
 
                 <div class="generations-grid">
                     <div class="gen-card">
-                        <img src="images/plantation10.jpg" alt="First Generation Farming" loading="lazy">
+                        <img src="images/vrindhavanam2.jpg" alt="First Generation Farming" loading="lazy">
                         <div class="gen-card-body">
                             <h3>Since 1932</h3>
-                            <p>Rooted in tradition and honest farming practices established by K.P. Varughese.</p>
+                            <p>Rooted in tradition and honest farming practices established by Muriyankal Kurian Kuruvilla</p>
                         </div>
                     </div>
 
                     <div class="gen-card">
-                        <img src="images/plantation11.jpg" alt="Second Generation Growth" loading="lazy">
+                        <img src="images/grow.jpg" alt="Second Generation Growth" loading="lazy">
                         <div class="gen-card-body">
                             <h3>Growing Legacy</h3>
                             <p>Expanding with care, preserving family values and achieving chemical-free certification.
@@ -2105,6 +2254,29 @@
                             <p>Clean, safe, and sustainable cultivation shipping direct from our estate to your
                                 doorstep.</p>
                         </div>
+                    </div>
+                </div>
+
+                <div class="about-pillars" style="margin-top: 2rem;">
+                    <div class="pillar">
+                        <div class="pillar-label">Pristine Origin</div>
+                        <div class="pillar-val">Pure Origin</div>
+                    </div>
+                    <div class="pillar">
+                        <div class="pillar-label">Estate Fresh</div>
+                        <div class="pillar-val">Estate Fresh</div>
+                    </div>
+                    <div class="pillar">
+                        <div class="pillar-label">Supreme Grade</div>
+                        <div class="pillar-val">Premium Grade</div>
+                    </div>
+                    <div class="pillar">
+                        <div class="pillar-label">Rich Essence</div>
+                        <div class="pillar-val">Naturally Rich</div>
+                    </div>
+                    <div class="pillar">
+                        <div class="pillar-label">True Aroma</div>
+                        <div class="pillar-val">Authentic Aroma</div>
                     </div>
                 </div>
 
@@ -2177,7 +2349,7 @@
                     <div class="journey-step">
                         <span class="journey-icon">🌱</span>
                         <div class="journey-label">Origin Farm</div>
-                        <div class="journey-value" id="rFarm">Vrindavanam Estate, Idukki</div>
+                        <div class="journey-value" id="rFarm">Vrindhavanam Estate, Idukki</div>
                     </div>
                     <div class="journey-step">
                         <span class="journey-icon">🗓️</span>
@@ -2236,7 +2408,7 @@
                 <div class="product-img">
                     <img src="images/plantation17.jpg" alt="Cardamom Reserve" loading="lazy">
                     <div class="overlay">
-                        <button class="overlay-btn" onclick="addToCart('Cardamom Reserve','₹1,240','🫚')">Add to
+                        <button class="overlay-btn" onclick="addToCart('Cardamom Reserve', document.getElementById('prod1price').textContent, '🫚', 'prod1weight')">Add to
                             Cart</button>
                         <button class="overlay-btn"
                             style="background:transparent;border:1px solid rgba(232,237,229,0.5);color:var(--cream)"
@@ -2253,14 +2425,14 @@
                             style="color:var(--text-light);font-size:0.78rem">(142)</span></div>
                     <div class="product-footer">
                         <div>
-                            <select class="weight-select" onchange="updatePrice(this,'prod1price')">
+                            <select class="weight-select" id="prod1weight" onchange="updatePrice(this,'prod1price')">
                                 <option value="1240">100g — ₹1,240</option>
                                 <option value="2180">200g — ₹2,180</option>
                                 <option value="4800">500g — ₹4,800</option>
                             </select>
                             <div class="product-price" id="prod1price">₹1,240</div>
                         </div>
-                        <button class="add-cart" onclick="addToCart('Cardamom Reserve','₹1,240','🫚')">Add to
+                        <button class="add-cart" onclick="addToCart('Cardamom Reserve', document.getElementById('prod1price').textContent, '🫚', 'prod1weight')">Add to
                             Cart</button>
                     </div>
                 </div>
@@ -2271,7 +2443,7 @@
                 <div class="product-img">
                     <img src="images/plantation14.jpg" alt="Malabar Pepper" loading="lazy">
                     <div class="overlay">
-                        <button class="overlay-btn" onclick="addToCart('Malabar Pepper','₹890','🌶️')">Add to
+                        <button class="overlay-btn" onclick="addToCart('Malabar Pepper', document.getElementById('prod2price').textContent, '🌶️', 'prod2weight')">Add to
                             Cart</button>
                     </div>
                 </div>
@@ -2285,14 +2457,14 @@
                     </div>
                     <div class="product-footer">
                         <div>
-                            <select class="weight-select" onchange="updatePrice(this,'prod2price')">
+                            <select class="weight-select" id="prod2weight" onchange="updatePrice(this,'prod2price')">
                                 <option value="890">100g — ₹890</option>
                                 <option value="1600">200g — ₹1,600</option>
                                 <option value="3600">500g — ₹3,600</option>
                             </select>
                             <div class="product-price" id="prod2price">₹890</div>
                         </div>
-                        <button class="add-cart" onclick="addToCart('Malabar Pepper','₹890','🌶️')">Add to Cart</button>
+                        <button class="add-cart" onclick="addToCart('Malabar Pepper', document.getElementById('prod2price').textContent, '🌶️', 'prod2weight')">Add to Cart</button>
                     </div>
                 </div>
             </div>
@@ -2302,7 +2474,7 @@
                 <div class="product-img">
                     <img src="images/plantation16.jpg" alt="Lakadong Turmeric" loading="lazy">
                     <div class="overlay">
-                        <button class="overlay-btn" onclick="addToCart('Golden Turmeric','₹680','🟡')">Add to
+                        <button class="overlay-btn" onclick="addToCart('Lakadong Turmeric', document.getElementById('prod3price').textContent, '🟡', 'prod3weight')">Add to
                             Cart</button>
                     </div>
                 </div>
@@ -2316,14 +2488,14 @@
                             style="color:var(--text-light);font-size:0.78rem">(203)</span></div>
                     <div class="product-footer">
                         <div>
-                            <select class="weight-select" onchange="updatePrice(this,'prod3price')">
+                            <select class="weight-select" id="prod3weight" onchange="updatePrice(this,'prod3price')">
                                 <option value="680">100g — ₹680</option>
                                 <option value="1200">200g — ₹1,200</option>
                                 <option value="2600">500g — ₹2,600</option>
                             </select>
                             <div class="product-price" id="prod3price">₹680</div>
                         </div>
-                        <button class="add-cart" onclick="addToCart('Lakadong Turmeric','₹680','🟡')">Add to
+                        <button class="add-cart" onclick="addToCart('Lakadong Turmeric', document.getElementById('prod3price').textContent, '🟡', 'prod3weight')">Add to
                             Cart</button>
                     </div>
                 </div>
@@ -2334,7 +2506,7 @@
                 <div class="product-img">
                     <img src="images/plantation13.jpg" alt="Wild Cloves" loading="lazy">
                     <div class="overlay">
-                        <button class="overlay-btn" onclick="addToCart('Wild Cloves','₹1,480','🌿')">Add to
+                        <button class="overlay-btn" onclick="addToCart('Wild Cloves', document.getElementById('prod4price').textContent, '🌿', 'prod4weight')">Add to
                             Cart</button>
                     </div>
                 </div>
@@ -2348,14 +2520,98 @@
                     </div>
                     <div class="product-footer">
                         <div>
-                            <select class="weight-select" onchange="updatePrice(this,'prod4price')">
+                            <select class="weight-select" id="prod4weight" onchange="updatePrice(this,'prod4price')">
                                 <option value="1480">50g — ₹1,480</option>
                                 <option value="2600">100g — ₹2,600</option>
                                 <option value="5800">250g — ₹5,800</option>
                             </select>
                             <div class="product-price" id="prod4price">₹1,480</div>
                         </div>
-                        <button class="add-cart" onclick="addToCart('Wild Cloves','₹1,480','🌿')">Add to Cart</button>
+                        <button class="add-cart" onclick="addToCart('Wild Cloves', document.getElementById('prod4price').textContent, '🌿', 'prod4weight')">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 5 (Organic Highland Tea) -->
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="images/tea.jpg" alt="Organic Highland Tea" loading="lazy">
+                    <div class="overlay">
+                        <button class="overlay-btn" onclick="addToCart('Organic Highland Tea', document.getElementById('prod5price').textContent, '🍵', 'prod5weight')">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-body">
+                    <div class="stock-badge stock-good">In Stock</div>
+                    <div class="product-badge">Estate Grown</div>
+                    <div class="product-name">Organic Highland Tea</div>
+                    <div class="product-desc">Hand-rolled premium whole leaves grown at high altitude. Floral and smooth notes.</div>
+                    <div class="product-stars">★★★★★ <span style="color:var(--text-light);font-size:0.78rem">(94)</span></div>
+                    <div class="product-footer">
+                        <div>
+                            <select class="weight-select" id="prod5weight" onchange="updatePrice(this,'prod5price')">
+                                <option value="450">100g — ₹450</option>
+                                <option value="850">200g — ₹850</option>
+                                <option value="1900">500g — ₹1,900</option>
+                            </select>
+                            <div class="product-price" id="prod5price">₹450</div>
+                        </div>
+                        <button class="add-cart" onclick="addToCart('Organic Highland Tea', document.getElementById('prod5price').textContent, '🍵', 'prod5weight')">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 6 (Premium Estate Coffee) -->
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="images/coffee1.jpg" alt="Premium Estate Coffee" loading="lazy">
+                    <div class="overlay">
+                        <button class="overlay-btn" onclick="addToCart('Premium Estate Coffee', document.getElementById('prod6price').textContent, '☕', 'prod6weight')">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-body">
+                    <div class="stock-badge stock-low">Only 8 Batches Left</div>
+                    <div class="product-badge">Highland Arabica</div>
+                    <div class="product-name">Premium Estate Coffee</div>
+                    <div class="product-desc">Shade-grown medium-dark roast arabica beans from Idukki hills. Rich and chocolatey.</div>
+                    <div class="product-stars">★★★★★ <span style="color:var(--text-light);font-size:0.78rem">(118)</span></div>
+                    <div class="product-footer">
+                        <div>
+                            <select class="weight-select" id="prod6weight" onchange="updatePrice(this,'prod6price')">
+                                <option value="620">250g — ₹620</option>
+                                <option value="1150">500g — ₹1,150</option>
+                                <option value="2100">1kg — ₹2,100</option>
+                            </select>
+                            <div class="product-price" id="prod6price">₹620</div>
+                        </div>
+                        <button class="add-cart" onclick="addToCart('Premium Estate Coffee', document.getElementById('prod6price').textContent, '☕', 'prod6weight')">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 7 (Organic Forest Honey) -->
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="images/honey.jpg" alt="Organic Forest Honey" loading="lazy">
+                    <div class="overlay">
+                        <button class="overlay-btn" onclick="addToCart('Organic Forest Honey', document.getElementById('prod7price').textContent, '🍯', 'prod7weight')">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-body">
+                    <div class="stock-badge stock-good">In Stock</div>
+                    <div class="product-badge">Wild Harvested</div>
+                    <div class="product-name">Organic Forest Honey</div>
+                    <div class="product-desc">Raw, unfiltered honey sourced from the dense, biodiverse forests of the Western Ghats. Raw and pure.</div>
+                    <div class="product-stars">★★★★★ <span style="color:var(--text-light);font-size:0.78rem">(154)</span></div>
+                    <div class="product-footer">
+                        <div>
+                            <select class="weight-select" id="prod7weight" onchange="updatePrice(this,'prod7price')">
+                                <option value="580">250g — ₹580</option>
+                                <option value="1100">500g — ₹1,100</option>
+                                <option value="2000">1kg — ₹2,000</option>
+                            </select>
+                            <div class="product-price" id="prod7price">₹580</div>
+                        </div>
+                        <button class="add-cart" onclick="addToCart('Organic Forest Honey', document.getElementById('prod7price').textContent, '🍯', 'prod7weight')">Add to Cart</button>
                     </div>
                 </div>
             </div>
@@ -2366,26 +2622,18 @@
     <section id="why">
         <div style="text-align:center;max-width:600px;margin:0 auto 1rem">
             <div class="section-eyebrow" style="justify-content:center">Our Promise</div>
-            <h2 class="section-title">Why <em>Vrindavanam</em></h2>
+            <h2 class="section-title">Why <em>Vrindhavanam</em></h2>
         </div>
         <div class="why-grid">
             <div class="why-card">
                 <span class="why-icon">🌱</span>
-                <div class="why-title">100% Organic</div>
-                <div class="why-desc">No synthetic pesticides, herbicides, or fertilisers. Ever. Our soil health is our
-                    product quality.</div>
-            </div>
-            <div class="why-card">
-                <span class="why-icon">🔬</span>
-                <div class="why-title">Lab Verified</div>
-                <div class="why-desc">Every batch is third-party tested for purity, heavy metals, and contaminants
-                    before it leaves the estate.</div>
+                <div class="why-title">100% natural and safe</div>
+                <div class="why-desc">Min pesticides, herbicides, or fertilisers. Ever. Our soil health is our product quality.</div>
             </div>
             <div class="why-card">
                 <span class="why-icon">📍</span>
                 <div class="why-title">Single Origin</div>
-                <div class="why-desc">We know exactly which farm, which plot, and which farmer harvested your spice. No
-                    blending, no mystery.</div>
+                <div class="why-desc">We know exactly which farm, which plot, and which Section harvested your spice. No blending, no mystery.</div>
             </div>
             <div class="why-card">
                 <span class="why-icon">♻️</span>
@@ -2404,6 +2652,17 @@
                 <div class="why-title">Farm to Door</div>
                 <div class="why-desc">Direct supply chain means no middlemen, no warehousing delays. Fresher spice,
                     better price for you.</div>
+            </div>
+            <div class="why-card">
+                <span class="why-icon">🧫</span>
+                <div class="why-title">Bio Cultures & Inputs</div>
+                <div class="why-desc">Crafted with advanced bio-cultures and natural inputs to enhance soil vitality and elevate product purity.</div>
+            </div>
+            <div class="why-card">
+                <span class="why-icon">🔬</span>
+                <div class="why-title">Lab Verified</div>
+                <div class="why-desc">Every batch is third-party tested for purity, heavy metals, and contaminants
+                    before it leaves the estate.</div>
             </div>
         </div>
     </section>
@@ -2471,7 +2730,7 @@
     <!-- SUBSCRIPTION -->
     <section id="subscription">
         <div class="section-eyebrow">Monthly Discovery</div>
-        <h2 class="section-title">The Vrindavanam <em style="color:var(--gold-light)">Spice Box</em></h2>
+        <h2 class="section-title">The Vrindhavanam <em style="color:var(--gold-light)">Spice Box</em></h2>
 
         <div class="sub-content">
             <div class="sub-box">
@@ -2543,7 +2802,7 @@
         <div class="testimonials-grid">
             <div class="testimonial-card">
                 <div class="testi-stars">★★★★★</div>
-                <div class="testi-text">"The cardamom from Vrindavanam completely changed my chai. I traced it back to a
+                <div class="testi-text">"The cardamom from Vrindhavanam completely changed my chai. I traced it back to a
                     single farm in Idukki — that kind of transparency is unheard of."</div>
                 <div class="testi-author">
                     <div class="testi-avatar">AP</div>
@@ -2568,7 +2827,7 @@
             <div class="testimonial-card">
                 <div class="testi-stars">★★★★★</div>
                 <div class="testi-text">"As someone who cooks for 500 people daily, purity and consistency matter.
-                    Vrindavanam's turmeric tests higher than anything we'd found in 15 years of sourcing."</div>
+                    Vrindhavanam's turmeric tests higher than anything we'd found in 15 years of sourcing."</div>
                 <div class="testi-author">
                     <div class="testi-avatar">RK</div>
                     <div>
@@ -2584,7 +2843,7 @@
     <footer id="contact">
         <div class="footer-grid">
             <div class="footer-brand">
-                <h3>🌿 Vrindavanam Spice Co.</h3>
+                <h3>🌿 Vrindhavanam Estate Heritage Since 1932</h3>
                 <small>Heritage Since 1932 · Kerala, India</small>
                 <p>Three generations of honest farming. From our mist-wrapped hills to your kitchen — with nothing to
                     hide and everything to share.</p>
@@ -2617,15 +2876,15 @@
                 <h4>Contact</h4>
                 <ul>
                     <li><a href="tel:+919876543210">+91 98765 43210</a></li>
-                    <li><a href="mailto:hello@vrindavanamspice.com">hello@vrindavanamspice.com</a></li>
-                    <li><a href="#">Vrindavanam Estate, Idukki</a></li>
+                    <li><a href="mailto:hello@vrindhavanamspice.com">hello@vrindhavanamspice.com</a></li>
+                    <li><a href="#">Vrindhavanam Estate, Idukki</a></li>
                     <li><a href="#">Kerala – 685 515</a></li>
                     <li><a href="#" onclick="showToast('Opening WhatsApp...')">💬 WhatsApp Us</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <div class="footer-copy">© 2025 Vrindavanam Spice Co. All rights reserved. | Crafted with love in Kerala.
+            <div class="footer-copy">© 2025 Vrindhavanam Estate Heritage Since 1932. All rights reserved. | Crafted with love in Kerala.
             </div>
             <div class="footer-socials">
                 <a href="#">Instagram</a>
@@ -2641,7 +2900,7 @@
         <div class="map-overlay">
             <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem">Visit the
                 Estate</div>
-            <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:0.5rem">Vrindavanam Hills
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:0.5rem">Vrindhavanam Hills
             </h3>
             <p style="font-size:0.8rem;color:rgba(241,229,172,0.6)">Idukki District, Kerala, India</p>
         </div>
@@ -2693,22 +2952,36 @@
     <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
+    <!-- Audio Element -->
+    <audio id="ambienceAudio" loop>
+        <source src="audio/nature_ambience.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
         // CART STATE
         let cart = [];
         let cartOpen = false;
 
-        function addToCart(name, price, emoji) {
+        function addToCart(name, price, emoji, selectId) {
+            let finalName = name;
+            if (selectId) {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    const selectedText = select.options[select.selectedIndex].text;
+                    const weight = selectedText.split('—')[0].trim();
+                    finalName = `${name} (${weight})`;
+                }
+            }
             const numPrice = parseInt(price.replace(/[^0-9]/g, ''));
-            const existing = cart.find(i => i.name === name);
+            const existing = cart.find(i => i.name === finalName);
             if (existing) {
                 existing.qty++;
             } else {
-                cart.push({ name, price: numPrice, emoji, qty: 1 });
+                cart.push({ name: finalName, price: numPrice, emoji, qty: 1 });
             }
             updateCartUI();
             openCart();
-            showToast(name + ' added to cart');
+            showToast(finalName + ' added to cart');
         }
 
         function removeFromCart(name) {
@@ -2726,6 +2999,7 @@
         }
 
         function getImageForProduct(name) {
+            const baseName = name.replace(/\s*\([^)]+\)$/, '');
             const map = {
                 'Cardamom Reserve': 'images/plantation17.jpg',
                 'Malabar Pepper': 'images/plantation14.jpg',
@@ -2733,9 +3007,12 @@
                 'Wild Honey Pepper Batch 3': 'images/plantation14.jpg',
                 'Saffron-Touch Turmeric Batch 7': 'images/plantation16.jpg',
                 'Lakadong Turmeric': 'images/plantation16.jpg',
-                'Wild Cloves': 'images/plantation13.jpg'
+                'Wild Cloves': 'images/plantation13.jpg',
+                'Organic Highland Tea': 'images/tea.jpg',
+                'Premium Estate Coffee': 'images/coffee1.jpg',
+                'Organic Forest Honey': 'images/honey.jpg'
             };
-            return map[name] || 'images/plantation 2.jpg';
+            return map[baseName] || 'images/plantation 2.jpg';
         }
 
         function updateCartUI() {
@@ -2779,7 +3056,7 @@
             const batch = document.getElementById('batchInput').value || 'VRD-2024-CRD-12';
             const product = document.getElementById('productInput').value || 'Cardamom';
             document.getElementById('resultBatch').textContent = batch;
-            const farms = ['Vrindavanam Estate, Idukki', 'Hillcrest Plot, Munnar', 'Mist Valley Farm, Wayanad', 'Sunrise Ridge, Thekkady'];
+            const farms = ['Vrindhavanam Estate, Idukki', 'Hillcrest Plot, Munnar', 'Mist Valley Farm, Wayanad', 'Sunrise Ridge, Thekkady'];
             const methods = ['Sun-Dried, 6 Days', 'Shade Dried, 9 Days', 'Mechanical Drying, 48hrs', 'Traditional Kiln, 4 Days'];
             document.getElementById('rFarm').textContent = farms[Math.floor(Math.random() * farms.length)];
             document.getElementById('rDry').textContent = methods[Math.floor(Math.random() * methods.length)];
@@ -2801,10 +3078,14 @@
         const counterObserver = new IntersectionObserver(entries => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
-                    animateCount(document.getElementById('m1'), 78, '+');
-                    animateCount(document.getElementById('m2'), 140, '+');
-                    animateCount(document.getElementById('m3'), 24, '');
-                    animateCount(document.getElementById('m4'), 48000, '+');
+                    const m1 = document.getElementById('m1');
+                    const m2 = document.getElementById('m2');
+                    const m3 = document.getElementById('m3');
+                    const m4 = document.getElementById('m4');
+                    if (m1) animateCount(m1, 75, '+');
+                    if (m2) animateCount(m2, 1200, '');
+                    if (m3) animateCount(m3, 100, '%');
+                    if (m4) animateCount(m4, 0, '%');
                     counterObserver.disconnect();
                 }
             });
@@ -2831,25 +3112,30 @@
         // SOUND TOGGLE
         let soundOn = false;
         const ambientAudio = document.getElementById('ambienceAudio');
-        document.getElementById('soundBtn').addEventListener('click', function () {
-            soundOn = !soundOn;
-            this.textContent = soundOn ? '🔊 Ambience' : '🔇 Ambience';
-            if (soundOn) {
-                ambientAudio.volume = 0.2;
-                ambientAudio.play().catch(() => {
-                    showToast('Please interact with the page to play sound');
-                    soundOn = false;
-                    this.textContent = '🔇 Ambience';
-                });
-            } else {
-                ambientAudio.pause();
-            }
-            showToast(soundOn ? 'Ambient sound on' : 'Ambient sound off');
-        });
+        const soundBtn = document.getElementById('soundBtn');
+        if (soundBtn && ambientAudio) {
+            soundBtn.addEventListener('click', function () {
+                soundOn = !soundOn;
+                this.textContent = soundOn ? '🔊 Ambience' : '🔇 Ambience';
+                if (soundOn) {
+                    ambientAudio.volume = 0.2;
+                    ambientAudio.play().catch(() => {
+                        showToast('Please interact with the page to play sound');
+                        soundOn = false;
+                        this.textContent = '🔇 Ambience';
+                    });
+                } else {
+                    ambientAudio.pause();
+                }
+                showToast(soundOn ? 'Ambient sound on' : 'Ambient sound off');
+            });
+        }
 
         // ENTER KEY FOR TRACE
-        document.getElementById('batchInput').addEventListener('keydown', e => { if (e.key === 'Enter') traceSpice(); });
-        document.getElementById('productInput').addEventListener('keydown', e => { if (e.key === 'Enter') traceSpice(); });
+        const batchInput = document.getElementById('batchInput');
+        const productInput = document.getElementById('productInput');
+        if (batchInput) batchInput.addEventListener('keydown', e => { if (e.key === 'Enter') traceSpice(); });
+        if (productInput) productInput.addEventListener('keydown', e => { if (e.key === 'Enter') traceSpice(); });
 
         // PARALLAX on hero
         window.addEventListener('scroll', () => {

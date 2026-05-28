@@ -779,14 +779,17 @@
 .newsletter-input {
     flex: 1;
     min-width: 160px;
-    background: rgba(247, 242, 234, 0.06);
-    border: 1px solid rgba(201, 168, 76, 0.2);
+    background: rgba(247, 242, 234, 0.12);
+    backdrop-filter: blur(18px) saturate(120%);
+    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    border: 1px solid rgba(201, 168, 76, 0.34);
     border-radius: 2px;
     color: var(--cream);
     padding: 0.7rem 1rem;
     font-family: 'Jost', sans-serif;
     font-size: 0.82rem;
     outline: none;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.16), 0 8px 24px rgba(0, 0, 0, 0.16);
 }
 
 .newsletter-input::placeholder {
@@ -805,4 +808,111 @@
     text-transform: uppercase;
     cursor: pointer;
     border-radius: 2px;
+}
+
+/* Handpicked Spices Section */
+.handpicked-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.handpicked-tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  height: 0;
+  padding-bottom: 100%; /* maintain square aspect */
+  background-size: cover;
+  background-position: center;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(201, 168, 76, 0.18);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.handpicked-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.14), rgba(10,31,10,0.72));
+  transition: background 0.4s ease;
+}
+
+.handpicked-tile:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+.handpicked-tile:hover::before,
+.handpicked-tile.is-linked::before {
+  background: linear-gradient(180deg, rgba(10,31,10,0.1), rgba(10,31,10,0.82));
+}
+
+.tile-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1;
+  max-width: calc(100% - 2rem);
+  padding: 0.35rem 0.7rem;
+  border: 1px solid rgba(201, 168, 76, 0.42);
+  border-radius: 999px;
+  background: rgba(10, 31, 10, 0.48);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--gold-light);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.handpicked-tile .tile-name {
+  position: absolute;
+  right: 1rem;
+  bottom: 3.4rem;
+  left: 1rem;
+  z-index: 1;
+  color: #fff;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  text-align: left;
+  pointer-events: none;
+}
+
+.tile-value {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 1;
+  min-height: 2.2rem;
+  color: rgba(232, 237, 229, 0.82);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+  transform: translateY(0.25rem);
+  opacity: 0.88;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.handpicked-tile:hover .tile-value,
+.handpicked-tile.is-linked .tile-value {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .handpicked-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .handpicked-tile {
+    padding-bottom: 72%;
+  }
 }

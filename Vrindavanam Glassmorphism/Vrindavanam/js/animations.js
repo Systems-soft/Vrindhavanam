@@ -37,10 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
                     const metrics = [
-                        { id: 'm1', val: 78, suffix: '+' },
-                        { id: 'm2', val: 140, suffix: '+' },
-                        { id: 'm3', val: 24, suffix: '' },
-                        { id: 'm4', val: 48000, suffix: '+' }
+                        { id: 'm1', val: 75, suffix: '+' },
+                        { id: 'm2', val: 1200, suffix: '' },
+                        { id: 'm3', val: 100, suffix: '%' },
+                        { id: 'm4', val: 0, suffix: '%' }
                     ];
                     metrics.forEach(m => {
                         const el = document.getElementById(m.id);

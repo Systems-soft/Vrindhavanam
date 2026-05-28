@@ -319,6 +319,68 @@ section {
     border-color: var(--gold);
 }
 
+/* FEATURED SINGLE IMAGE STYLING */
+.featured-container {
+    position: relative;
+    max-width: 900px;
+    margin: 3rem auto 0 auto;
+    padding: 20px;
+    z-index: 2;
+}
+
+.featured-glow {
+    position: absolute;
+    inset: 30px;
+    background: url('../images/vrindhavanam.jpg') center/cover no-repeat;
+    filter: blur(40px);
+    opacity: 0.35;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 12px;
+    transform: translateY(15px) scale(0.95);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.featured-image-wrap {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(201, 168, 76, 0.25);
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.featured-image-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.45) 100%);
+    pointer-events: none;
+    transition: background 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.featured-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.8s ease;
+}
+
+.featured-container:hover .featured-img {
+    transform: scale(1.03);
+}
+
+.featured-container:hover .featured-glow {
+    opacity: 0.5;
+    transform: translateY(20px) scale(0.98);
+}
+
+.featured-container:hover .featured-image-wrap::after {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.55) 100%);
+}
+
 /* TRACE SECTION */
 #trace {
     background: var(--forest);
@@ -453,9 +515,67 @@ section {
 
 /* WHY US SECTION */
 #why {
-    background: linear-gradient(rgba(253, 251, 247, 0.85), rgba(253, 251, 247, 0.92)),
-        url('https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&q=80&w=2000') center/cover no-repeat;
-    backdrop-filter: blur(14px);
+    position: relative;
+    background: url("../images/beautiful4.jpg") center/cover no-repeat;
+    z-index: 1;
+    overflow: hidden;
+    isolation: isolate;
+    filter: contrast(1.1) brightness(1.05) saturate(1.1);
+}
+
+#why::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.25),
+        rgba(0, 0, 0, 0.45)
+    );
+    z-index: -1;
+}
+
+#why .section-title {
+    color: var(--gold-light) !important;
+}
+
+#why .section-title em {
+    color: var(--cream) !important;
+}
+
+#why .section-eyebrow {
+    color: rgba(212, 175, 55, 0.8) !important;
+}
+
+#why .section-eyebrow::before {
+    background: rgba(212, 175, 55, 0.8) !important;
+}
+
+#why .why-card {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: var(--cream) !important;
+}
+
+#why .why-card:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(201, 168, 76, 0.5) !important;
+}
+
+#why .why-card.is-linked {
+    background: rgba(201, 168, 76, 0.16) !important;
+    border-color: rgba(201, 168, 76, 0.75) !important;
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.32), inset 0 1px 1px rgba(255, 255, 255, 0.24) !important;
+    transform: translateY(-6px);
+}
+
+#why .why-title {
+    color: var(--gold-light) !important;
+}
+
+#why .why-desc {
+    color: rgba(232, 237, 229, 0.8) !important;
 }
 
 .why-grid {
@@ -537,13 +657,41 @@ section {
 
 /* FOOTER */
 footer {
-    background: linear-gradient(rgba(10, 25, 10, 0.95), rgba(10, 25, 10, 0.98)),
-        url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80&w=2000') center/cover no-repeat;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--forest);
     padding: 5rem 4rem 2.5rem;
+}
+
+footer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-image: url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80&w=2000');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(0.8) contrast(1.1) saturate(1.05);
+    transform: scale(1.02);
+}
+
+footer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(10, 25, 10, 0.72) 0%, rgba(10, 25, 10, 0.5) 52%, rgba(10, 25, 10, 0.78) 100%),
+        linear-gradient(180deg, rgba(10, 25, 10, 0.52) 0%, rgba(10, 25, 10, 0.78) 100%);
 }
 
 .footer-grid {
     display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem;
+    position: relative;
+    z-index: 1;
 }
 
 .footer-col h4 {
@@ -554,10 +702,24 @@ footer {
 .footer-col ul { list-style: none; }
 .footer-col ul li { margin-bottom: 0.7rem; }
 
+.footer-col a,
+.footer-copy,
+.footer-socials a {
+    color: rgba(232, 237, 229, 0.74);
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
+}
+
+.footer-col a:hover,
+.footer-socials a:hover {
+    color: var(--gold-light);
+}
+
 .footer-bottom {
     border-top: 1px solid rgba(201, 168, 76, 0.1); padding-top: 2rem;
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
     gap: 1rem;
+    position: relative;
+    z-index: 1;
 }
 
 /* MAP SECTION */
@@ -634,4 +796,40 @@ footer {
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
     .metrics-bar { padding: 1.5rem 2rem; }
     .metric-sep { display: none; }
+    footer { padding: 4rem 2rem 2rem; }
+    footer::after {
+        background:
+            linear-gradient(180deg, rgba(10, 25, 10, 0.68) 0%, rgba(10, 25, 10, 0.84) 100%),
+            rgba(0, 0, 0, 0.18);
+    }
+}
+
+/* ===== FULL WIDTH FIX ===== */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* Remove container restriction */
+.container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Make all sections full width */
+section {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Fix background images */
+section {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
