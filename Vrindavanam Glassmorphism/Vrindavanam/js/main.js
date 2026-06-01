@@ -291,9 +291,11 @@ function renderHandpickedDetail(productKey, sourceTile) {
     });
 
     const varieties = product.varieties.map(variety => `
-        <div class="handpicked-variety-tile" style="${handpickedTileImageStyle(variety.image)}">
-            <span class="handpicked-variety-label">${escapeHtml(variety.label)}</span>
+        <div class="handpicked-variety-tile">
+            <img class="handpicked-variety-image" src="${escapeHtml(variety.image)}" alt="${escapeHtml(variety.title)}">
             <span class="handpicked-variety-title">${escapeHtml(variety.title)}</span>
+            ${variety.copy ? `<span class="handpicked-variety-copy">${escapeHtml(variety.copy)}</span>` : ''}
+            <span class="handpicked-variety-label">${escapeHtml(variety.label)}</span>
         </div>
     `).join('');
 
@@ -346,8 +348,127 @@ function closeHandpickedDetail() {
     }, 420);
 }
 
+function setupGroupedTileSlider(selector, groupSize = 3, direction = 'left') {
+    const container = document.querySelector(selector);
+    if (!container || container.querySelector('.tile-slider-track')) return;
+
+    const cards = Array.from(container.children);
+    if (!cards.length) return;
+
+    const track = document.createElement('div');
+    track.className = 'tile-slider-track';
+
+    if (cards.length <= groupSize) return;
+
+    const useRightMotion = direction === 'right' && cards.length === groupSize * 2;
+
+    if (useRightMotion) {
+        cards.slice(groupSize).forEach(card => {
+            const clone = card.cloneNode(true);
+            clone.setAttribute('aria-hidden', 'true');
+            track.appendChild(clone);
+        });
+    }
+
+    cards.forEach(card => track.appendChild(card));
+    container.appendChild(track);
+
+    if (!useRightMotion) {
+        cards.slice(0, groupSize).forEach(card => {
+            const clone = card.cloneNode(true);
+            clone.setAttribute('aria-hidden', 'true');
+            track.appendChild(clone);
+        });
+    }
+
+    const originalGroups = Math.ceil(cards.length / groupSize);
+    const loopGroup = originalGroups;
+    let currentGroup = useRightMotion ? 1 : 0;
+
+    const getStepSize = () => {
+        const firstCard = track.children[0];
+        const styles = window.getComputedStyle(track);
+        const gap = parseFloat(styles.columnGap || styles.gap || 0);
+        return firstCard.getBoundingClientRect().width + gap;
+    };
+
+    const moveToGroup = (group, animated = true) => {
+        track.style.transition = animated ? 'transform 700ms ease' : 'none';
+        track.style.transform = `translateX(${-group * groupSize * getStepSize()}px)`;
+    };
+
+    const advance = () => {
+        if (useRightMotion) {
+            if (currentGroup === 1) {
+                currentGroup = 0;
+                moveToGroup(currentGroup);
+
+                window.setTimeout(() => {
+                    currentGroup = 2;
+                    moveToGroup(currentGroup, false);
+                }, 720);
+            } else {
+                currentGroup = 1;
+                moveToGroup(currentGroup);
+            }
+
+            return;
+        }
+
+        currentGroup += 1;
+        moveToGroup(currentGroup);
+
+        if (currentGroup === loopGroup) {
+            window.setTimeout(() => {
+                currentGroup = 0;
+                moveToGroup(currentGroup, false);
+            }, 720);
+        }
+    };
+
+    moveToGroup(currentGroup, false);
+    window.addEventListener('resize', () => moveToGroup(currentGroup, false));
+    window.setInterval(advance, 5000);
+}
+
+function setupAboutRowExchange() {
+    const container = document.querySelector('#about .about-pillars-exchange');
+    if (!container) return;
+
+    const rows = container.querySelectorAll('.about-pillars-row');
+    if (rows.length < 2) return;
+
+    const updateShift = () => {
+        container.style.removeProperty('--about-tile-height');
+        container.style.removeProperty('--about-row-height');
+
+        const tiles = container.querySelectorAll('.pillar');
+        const maxTileHeight = Math.max(...Array.from(tiles, tile => tile.offsetHeight));
+
+        if (maxTileHeight) {
+            container.style.setProperty('--about-tile-height', `${maxTileHeight}px`);
+        }
+
+        requestAnimationFrame(() => {
+            const maxRowHeight = Math.max(...Array.from(rows, row => row.offsetHeight));
+            const rowGap = parseFloat(window.getComputedStyle(container).getPropertyValue('--about-row-gap')) || 0;
+
+            if (maxRowHeight) {
+                container.style.setProperty('--about-row-height', `${maxRowHeight}px`);
+                container.style.setProperty('--about-row-shift', `${maxRowHeight + rowGap}px`);
+            }
+        });
+    };
+
+    requestAnimationFrame(updateShift);
+    window.addEventListener('resize', updateShift);
+}
+
 // INIT
 document.addEventListener('DOMContentLoaded', () => {
+    setupGroupedTileSlider('.why-grid');
+    setupAboutRowExchange();
+
     // ENTER KEY FOR TRACE
     const batchInput = document.getElementById('batchInput');
     const productInput = document.getElementById('productInput');

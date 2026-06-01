@@ -520,17 +520,21 @@ section {
     z-index: 1;
     overflow: hidden;
     isolation: isolate;
+    width: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 #why::before {
     content: "";
     position: absolute;
-    inset: -16px;
+    inset: -22px;
     background:
-        radial-gradient(circle at 50% 28%, rgba(212, 175, 55, 0.12), transparent 36%),
+        radial-gradient(circle at 50% 24%, rgba(232, 201, 122, 0.16), transparent 34%),
         url("../images/cow.jpg") center/cover no-repeat;
-    filter: blur(2px) brightness(1.12) contrast(1.18) saturate(1.05);
-    transform: scale(1.025);
+    filter: blur(4px) brightness(0.98) contrast(1.12) saturate(0.92);
+    transform: scale(1.03);
     z-index: -2;
 }
 
@@ -540,9 +544,10 @@ body #why::after {
     inset: 0;
     pointer-events: none;
     background:
-        linear-gradient(180deg, rgba(2, 8, 3, 0.35) 0%, rgba(5, 17, 7, 0.42) 45%, rgba(0, 0, 0, 0.45) 100%),
-        radial-gradient(circle at 50% 34%, rgba(255, 255, 255, 0.05) 0%, transparent 34%),
-        radial-gradient(circle at 50% 55%, transparent 28%, rgba(0, 0, 0, 0.35) 100%);
+        linear-gradient(180deg, rgba(2, 8, 3, 0.2) 0%, rgba(6, 20, 8, 0.34) 42%, rgba(0, 0, 0, 0.5) 100%),
+        radial-gradient(circle at 50% 30%, rgba(255, 246, 210, 0.13) 0%, transparent 34%),
+        radial-gradient(circle at 50% 62%, transparent 28%, rgba(0, 0, 0, 0.38) 100%);
+    backdrop-filter: blur(1.2px) saturate(1.08);
     z-index: -1;
 }
 
@@ -555,22 +560,25 @@ body #why::after {
 }
 
 #why .section-eyebrow {
-    color: rgba(212, 175, 55, 0.8) !important;
+    color: #fff !important;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35);
 }
 
 #why .section-eyebrow::before {
-    background: rgba(212, 175, 55, 0.8) !important;
+    background: #fff !important;
 }
 
 #why .why-card {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background-color: rgba(9, 24, 10, 0.58) !important;
+    border: 1px solid rgba(232, 201, 122, 0.46) !important;
     color: var(--cream) !important;
+    backdrop-filter: blur(20px) saturate(1.18);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
 }
 
 #why .why-card:hover {
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    border-color: rgba(201, 168, 76, 0.5) !important;
+    background-color: rgba(14, 38, 15, 0.66) !important;
+    border-color: rgba(232, 201, 122, 0.72) !important;
 }
 
 #why .why-card.is-linked {
@@ -582,15 +590,30 @@ body #why::after {
 
 #why .why-title {
     color: var(--gold-light) !important;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.66);
 }
 
 #why .why-desc {
-    color: rgba(232, 237, 229, 0.8) !important;
+    color: rgba(247, 242, 234, 0.94) !important;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.58);
+}
+
+#why .why-icon {
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.58));
 }
 
 .why-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 2rem; margin-top: 3rem; max-width: 1200px; margin-left: auto; margin-right: auto;
+}
+
+@media (min-width: 901px) {
+    #why {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
 }
 
 /* LIMITED BATCH SECTION */

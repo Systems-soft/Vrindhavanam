@@ -168,8 +168,8 @@
 
 .product-page .section-title {
     color: #162015;
-    font-size: clamp(1.45rem, 3vw, 2.35rem);
-    line-height: 0.98;
+    font-size: clamp(1.9rem, 3.8vw, 3.05rem);
+    line-height: 1.06;
     margin-bottom: 0;
 }
 
@@ -178,17 +178,21 @@
 }
 
 .product-page-intro {
-    max-width: 640px;
-    color: rgba(22, 32, 21, 0.72);
-    font-size: clamp(0.72rem, 0.95vw, 0.84rem);
-    line-height: 1.22;
+    max-width: min(100%, 980px);
+    color: rgba(22, 32, 21, 0.94);
+    font-size: clamp(0.86rem, 1vw, 1rem);
+    font-weight: 500;
+    line-height: 1.35;
     margin-bottom: var(--product-section-gap);
+    overflow: visible;
+    text-overflow: clip;
+    white-space: nowrap;
 }
 
 .product-variety-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0;
+    gap: clamp(0.75rem, 1.35vw, 1.1rem);
     min-height: 0;
     padding: 0;
 }
@@ -211,12 +215,14 @@
 
 .product-variety-card {
     isolation: isolate;
-    min-height: clamp(240px, 38vh, 340px);
-    background-image: var(--product-image);
+    min-height: 0;
+    background-color: rgba(13, 31, 17, 0.94);
+    background-image: none !important;
     background-repeat: no-repeat;
     backdrop-filter: none;
-    padding: clamp(1rem, 1.6vw, 1.35rem);
-    gap: 0.46rem;
+    padding: 0 clamp(1.15rem, 1.85vw, 1.6rem) clamp(1.15rem, 1.85vw, 1.6rem);
+    gap: 0.68rem;
+    justify-content: flex-start;
     transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
 }
 
@@ -238,16 +244,25 @@
 }
 
 .product-variety-card::before {
-    z-index: 1;
-    background:
-        linear-gradient(180deg, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0.24) 66%, rgba(0, 0, 0, 0.54) 100%),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.02) 58%);
+    content: none;
 }
 
 .product-variety-card > *,
 .product-feature-card > * {
     position: relative;
     z-index: 2;
+}
+
+.product-variety-image {
+    order: 0;
+    display: block;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    height: clamp(180px, 24vw, 240px);
+    margin: 0 0 0.75rem;
+    object-fit: cover;
+    object-position: center;
 }
 
 .product-feature-card > * {
@@ -264,10 +279,14 @@
 }
 
 .product-variety-label {
+    order: 3;
+    display: block;
+    max-width: 100%;
+    margin-top: 0.1rem;
     color: rgba(255, 235, 176, 0.98);
     font-size: clamp(0.66rem, 0.95vw, 0.78rem);
     font-weight: 700;
-    line-height: 1.28;
+    line-height: 1.35;
     letter-spacing: 0.1em;
     text-shadow: 0 1px 7px rgba(0, 0, 0, 0.7), 0 0 1px rgba(0, 0, 0, 0.9);
 }
@@ -283,11 +302,15 @@
 }
 
 .product-variety-name {
+    order: 1;
+    max-width: 100%;
+    margin: 0;
     color: #fffdf7;
     font-size: clamp(1.24rem, 2vw, 1.55rem);
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.24;
     letter-spacing: 0;
+    overflow-wrap: break-word;
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.78), 0 0 1px rgba(0, 0, 0, 0.9);
 }
 
@@ -302,16 +325,25 @@
 }
 
 .product-variety-copy {
+    order: 2;
+    max-width: 100%;
+    margin: 0;
     color: rgba(255, 253, 247, 0.94);
     font-size: clamp(0.82rem, 1.05vw, 0.96rem);
     font-weight: 500;
-    line-height: 1.42;
+    line-height: 1.58;
+    overflow-wrap: break-word;
     text-shadow: 0 1px 9px rgba(0, 0, 0, 0.76), 0 0 1px rgba(0, 0, 0, 0.86);
 }
 
 .product-buy-btn {
+    order: 4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
     align-self: flex-start;
-    margin-top: 0.18rem;
+    margin-top: 0.3rem;
     padding: 0.52rem 0.95rem;
     border: 1px solid rgba(255, 255, 255, 0.42);
     border-radius: 999px;
@@ -322,6 +354,7 @@
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    text-decoration: none;
     box-shadow: 0 8px 18px rgba(121, 90, 28, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.55);
     cursor: pointer;
     transition: transform 0.25s ease, filter 0.25s ease, box-shadow 0.25s ease;
@@ -347,9 +380,9 @@
 
 .other-products-section {
     grid-column: 1 / -1;
-    margin-top: var(--product-section-gap);
+    margin-top: clamp(0.75rem, 1.35vw, 1.1rem);
     min-height: 0;
-    padding: clamp(0.2rem, 0.8vw, 0.5rem) 0 0;
+    padding: 0;
 }
 
 .other-products-title {
@@ -375,8 +408,7 @@
 
 .other-products-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(2, auto);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: clamp(0.75rem, 1.35vw, 1.1rem);
     padding: 0;
     margin: 0;
@@ -395,10 +427,20 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    grid-column: span 2;
     gap: 0.38rem;
     padding: clamp(1.15rem, 1.85vw, 1.6rem);
     text-decoration: none;
+    animation: productPageIn 0.55s ease both;
     transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.other-product-card:nth-last-child(2) {
+    grid-column: 2 / span 2;
+}
+
+.other-product-card:last-child {
+    grid-column: 4 / span 2;
 }
 
 @keyframes productPageIn {
@@ -493,16 +535,24 @@
 
     .product-variety-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0;
     }
 
     .other-products-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-template-rows: auto;
+    }
+
+    .other-product-card,
+    .other-product-card:nth-last-child(2),
+    .other-product-card:last-child {
+        grid-column: auto;
     }
 
     .product-variety-card {
-        min-height: 260px;
+        min-height: 0;
+    }
+
+    .product-variety-image {
+        height: clamp(175px, 30vw, 230px);
     }
 
     .other-product-card {
@@ -542,13 +592,12 @@
     }
 
     .product-page-intro {
-        line-height: 1.18;
-        margin-bottom: 3rem;
+        line-height: 1.35;
+        white-space: normal;
     }
 
     .product-variety-grid {
         grid-template-columns: 1fr;
-        gap: 0;
     }
 
     .other-products-grid {
@@ -557,7 +606,11 @@
     }
 
     .product-variety-card {
-        min-height: 260px;
+        min-height: 0;
+    }
+
+    .product-variety-image {
+        height: clamp(180px, 52vw, 240px);
     }
 
     .other-product-card {
@@ -577,11 +630,15 @@
     }
 
     .product-page-intro {
-        line-height: 1.16;
+        line-height: 1.44;
     }
 
     .product-variety-card {
-        min-height: 210px;
+        min-height: 0;
+    }
+
+    .product-variety-image {
+        height: 170px;
     }
 
     .other-product-card {

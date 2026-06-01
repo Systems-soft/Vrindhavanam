@@ -77,6 +77,15 @@
             gap: 0.6rem;
         }
 
+        .brand-logo-img {
+            width: 44px;
+            height: 44px;
+            flex: 0 0 auto;
+            border-radius: 50%;
+            object-fit: cover;
+            overflow: hidden;
+        }
+
         .brand-lockup {
             display: inline-flex;
             flex-direction: column;
@@ -809,25 +818,16 @@
             background: var(--cream);
             border-radius: 16px;
             overflow: hidden;
-            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
             border: 1px solid rgba(212, 175, 55, 0.1);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        .gen-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: none;
         }
 
         .gen-card img {
             width: 100%;
             height: 280px;
             object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-
-        .gen-card:hover img {
-            transform: scale(1.08);
+            transition: none;
         }
 
         .gen-card-body {
@@ -873,6 +873,46 @@
             padding: 1rem 1.5rem;
             border-radius: 2px;
             border-left: 2px solid var(--gold);
+        }
+
+        @keyframes floatHorizontal {
+            0% {
+                transform: translateX(-24px);
+            }
+
+            50% {
+                transform: translateX(24px);
+            }
+
+            100% {
+                transform: translateX(-24px);
+            }
+        }
+
+        .about-pillars.floating-pillars {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow: hidden;
+        }
+
+        .about-pillars.floating-pillars .floating-tiles-group {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            animation: floatHorizontal 5s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .about-pillars.floating-pillars .pillar {
+            width: auto;
+            min-width: 0;
+            transform: none;
+        }
+
+        .about-pillars.floating-pillars .pillar:hover {
+            transform: none;
         }
 
         .pillar-label {
@@ -1297,16 +1337,25 @@
         }
 
         .why-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 2rem;
+            --tile-gap: 2rem;
+            display: block;
+            overflow: hidden;
             margin-top: 3rem;
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
         }
 
+        .why-grid .tile-slider-track {
+            display: flex;
+            gap: var(--tile-gap);
+            transition: transform 700ms ease;
+            will-change: transform;
+        }
+
         .why-card {
+            flex: 0 0 calc((100% - (var(--tile-gap) * 2)) / 3);
+            min-width: 0;
             padding: 2rem 1.5rem;
             border-radius: 4px;
             border: 1px solid rgba(255, 255, 255, 0.26);
@@ -1317,7 +1366,6 @@
             background-size: cover;
             background-position: center;
             backdrop-filter: blur(18px) saturate(1.1);
-            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
             position: relative;
             overflow: hidden;
             box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.24);
@@ -1333,7 +1381,6 @@
             filter: blur(5px) brightness(1.08) contrast(1.1) saturate(1.12);
             opacity: 0.58;
             transform: scale(1.04);
-            transition: opacity 0.3s, transform 0.3s;
             z-index: 0;
         }
 
@@ -1354,14 +1401,11 @@
         }
 
         .why-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(201, 168, 76, 0.46);
-            box-shadow: 0 28px 58px rgba(0, 0, 0, 0.34), inset 0 1px 2px rgba(255, 255, 255, 0.28);
+            transform: none;
         }
 
         .why-card:hover::before {
-            opacity: 0.7;
-            transform: scale(1.07);
+            transform: scale(1.04);
         }
 
         .why-card:nth-child(1) {
@@ -2224,19 +2268,23 @@
         }
 
         @media (max-width: 640px) {
+            .brand-logo-img {
+                width: 36px;
+                height: 36px;
+            }
+
             .products-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
-</head>
+    <link rel="icon" href="images/logo vrindhavanam.png">`r`n</head>
 
 <body>
 
     <!-- NAV -->
     <nav id="navbar">
-        <div class="nav-logo">
-            🌿 <span class="brand-lockup"><span class="brand-title">Vrindhavanam Estate</span><span
+        <div class="nav-logo"><img class="brand-logo-img" src="images/logo vrindhavanam.png" alt="Vrindhavanam Estate logo"><span class="brand-lockup"><span class="brand-title">Vrindhavanam Estate</span><span
                     class="brand-subtitle">Heritage Since 1932</span></span>
         </div>
         <ul class="nav-links">
@@ -2946,7 +2994,7 @@
     <footer id="contact">
         <div class="footer-grid">
             <div class="footer-brand">
-                <h3>🌿 <span class="brand-lockup"><span class="brand-title">Vrindhavanam Estate</span><span
+                <h3><img class="brand-logo-img" src="images/logo vrindhavanam.png" alt="Vrindhavanam Estate logo"><span class="brand-lockup"><span class="brand-title">Vrindhavanam Estate</span><span
                             class="brand-subtitle">Heritage Since 1932</span></span></h3>
                 <small>IDUKKI, INDIA</small>
                 <p>Three generations of honest farming. From our mist-wrapped hills to your kitchen — with nothing to
@@ -3235,6 +3283,80 @@
                 showToast(soundOn ? 'Ambient sound on' : 'Ambient sound off');
             });
         }
+
+        function setupGroupedTileSlider(selector) {
+            const container = document.querySelector(selector);
+            if (!container || container.querySelector('.tile-slider-track')) return;
+
+            const cards = Array.from(container.children);
+            if (!cards.length) return;
+
+            const track = document.createElement('div');
+            track.className = 'tile-slider-track';
+            cards.forEach(card => track.appendChild(card));
+            container.appendChild(track);
+
+            if (cards.length <= 3) return;
+
+            cards.slice(0, 3).forEach(card => {
+                const clone = card.cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true');
+                track.appendChild(clone);
+            });
+
+            const originalGroups = Math.ceil(cards.length / 3);
+            const loopGroup = originalGroups;
+            let currentGroup = 0;
+
+            const getStepSize = () => {
+                const firstCard = track.children[0];
+                const styles = window.getComputedStyle(track);
+                const gap = parseFloat(styles.columnGap || styles.gap || 0);
+                return firstCard.getBoundingClientRect().width + gap;
+            };
+
+            const moveToGroup = (group, animated = true) => {
+                track.style.transition = animated ? 'transform 700ms ease' : 'none';
+                track.style.transform = `translateX(${-group * 3 * getStepSize()}px)`;
+            };
+
+            const advance = () => {
+                currentGroup += 1;
+                moveToGroup(currentGroup);
+
+                if (currentGroup === loopGroup) {
+                    window.setTimeout(() => {
+                        currentGroup = 0;
+                        moveToGroup(currentGroup, false);
+                    }, 720);
+                }
+            };
+
+            window.addEventListener('resize', () => moveToGroup(currentGroup, false));
+            window.setInterval(advance, 5000);
+        }
+
+        setupGroupedTileSlider('.why-grid');
+
+        function setupFloatingPillarGroups() {
+            document.querySelectorAll('#about .about-pillars').forEach(container => {
+                if (container.classList.contains('floating-pillars')) return;
+
+                const tiles = Array.from(container.children).filter(tile => tile.classList.contains('pillar'));
+                if (!tiles.length) return;
+
+                container.classList.add('floating-pillars');
+
+                for (let index = 0; index < tiles.length; index += 3) {
+                    const group = document.createElement('div');
+                    group.className = 'floating-tiles-group';
+                    tiles.slice(index, index + 3).forEach(tile => group.appendChild(tile));
+                    container.appendChild(group);
+                }
+            });
+        }
+
+        setupFloatingPillarGroups();
 
         // ENTER KEY FOR TRACE
         const batchInput = document.getElementById('batchInput');
