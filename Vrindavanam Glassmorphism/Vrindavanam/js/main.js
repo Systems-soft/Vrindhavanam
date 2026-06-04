@@ -1,6 +1,7 @@
 // CART STATE
 let cart = [];
 let cartOpen = false;
+let productsData = [];
 
 function addToCart(name, price, emoji, selectId) {
     let finalName = name;
@@ -19,9 +20,37 @@ function addToCart(name, price, emoji, selectId) {
     } else {
         cart.push({ name: finalName, price: numPrice, emoji, qty: 1 });
     }
+    console.log("Cart array:", cart);
     updateCartUI();
     openCart();
     showToast(finalName + ' added to cart');
+}
+function addToCartFromAPI(productName) {
+
+    console.log("Clicked:", productName); // ✅ ADD
+
+    if (!productsData.length) {
+        alert("Please wait, products are still loading...");
+        return;
+    }
+
+    const product = productsData.find(
+        p => p.product_name === productName
+    );
+
+    console.log("Found product:", product); // ✅ ADD
+
+    if (!product) {
+        console.log("Product not found");
+        return;
+    }
+
+    addToCart(
+    `${product.product_name}${product.weight ? ` (${product.weight})` : ""}`,
+    "₹" + product.daily_price,
+    "🌿",
+    null
+);
 }
 
 function removeFromCart(name) {
@@ -101,37 +130,123 @@ function traceSpice() {
     const productInput = document.getElementById('productInput');
     const resultBatch = document.getElementById('resultBatch');
     const farmEl = document.getElementById('rFarm');
+    const dateEl = document.getElementById('rDate');
     const dryEl = document.getElementById('rDry');
+    const labEl = document.getElementById('rLab');
+    const packEl = document.getElementById('rPack');
     const traceResult = document.getElementById('traceResult');
+    
+    const verifiedLabel = document.getElementById('verifiedLabel');
+    const verifiedBadge = document.getElementById('verifiedBadge');
+    
+    const infoAltitude = document.getElementById('infoAltitude');
+    const infoRainfall = document.getElementById('infoRainfall');
+    const infoPurity = document.getElementById('infoPurity');
 
-    if (!batchInput || !productInput || !resultBatch || !farmEl || !dryEl || !traceResult) {
+    if (!batchInput || !productInput || !resultBatch || !traceResult) {
         return;
     }
 
     const batch = batchInput.value || 'VRD-2024-CRD-12';
     const product = productInput.value || 'Cardamom';
     resultBatch.textContent = batch;
-    const farms = ['Vrindhavanam Estate, Idukki', 'Hillcrest Plot, Munnar', 'Mist Valley Farm, Wayanad', 'Sunrise Ridge, Thekkady'];
-    const methods = ['Sun-Dried, 6 Days', 'Shade Dried, 9 Days', 'Mechanical Drying, 48hrs', 'Traditional Kiln, 4 Days'];
-    farmEl.textContent = farms[Math.floor(Math.random() * farms.length)];
-    dryEl.textContent = methods[Math.floor(Math.random() * methods.length)];
+
+    // Show Batch Not Verified label in soft red warning badge
+    if (verifiedLabel) {
+        verifiedLabel.textContent = "Batch Not Verified";
+        verifiedLabel.className = "badge-warning-status";
+        verifiedLabel.style.display = "block";
+    }
+    if (verifiedBadge) {
+        verifiedBadge.style.display = "none";
+    }
+
+    // Inside dropdown sections (steps), show "Product not found" in modern badge style
+    const notFoundBadgeHtml = `<span class="badge-warning-status" style="margin: 0.5rem auto 0; display: inline-block;">Product not found</span>`;
+    
+    if (farmEl) farmEl.innerHTML = notFoundBadgeHtml; // Seed -> Origin Farm
+    if (dateEl) dateEl.innerHTML = notFoundBadgeHtml; // Harvest -> Harvest Date
+    if (dryEl) dryEl.innerHTML = notFoundBadgeHtml;   // Process -> Drying Method
+    if (labEl) labEl.innerHTML = notFoundBadgeHtml;   // Process -> Lab Tested
+    if (packEl) packEl.innerHTML = notFoundBadgeHtml; // Pack -> Packed
+
+    // Additional info sections with subtle animated loading styles
+    if (infoRainfall) {
+        infoRainfall.innerHTML = `<span class="status-indicator-loading">Loading environmental data...</span>`;
+    }
+    if (infoAltitude) {
+        infoAltitude.innerHTML = `<span class="status-indicator-loading">Fetching elevation details...</span>`;
+    }
+    if (infoPurity) {
+        infoPurity.innerHTML = `<span class="status-indicator-loading">Verifying quality parameters...</span>`;
+    }
+
     traceResult.classList.add('show');
-    showToast(product + ' batch ' + batch + ' traced successfully');
+    showToast(product + ' batch ' + batch + ' traced: Not Verified');
 }
 
+
 // WEIGHT SELECT
+
+
+// 1. LOAD PRODUCTS FIRST
+document.addEventListener("DOMContentLoaded", () => {
+
+    fetch("/api/products")
+    .then(res => res.json())
+    .then(data => {
+
+        productsData = data;
+
+        console.log("Products loaded", productsData);
+
+        document.querySelectorAll(".weight-select")
+        .forEach(select => {
+
+            const priceBox =
+                select.closest(".product-variety-card")
+                .querySelector(".product-price");
+
+            if (priceBox) {
+                updatePrice(select, priceBox.id);
+            }
+
+        });
+
+    })
+    .catch(err => console.log("API Error:", err));
+
+});
+
+
+// 2. PRICE CALC FUNCTION
 function updatePrice(select, priceId) {
+
+    if (!productsData || productsData.length === 0) return;
+
     const priceEl = document.getElementById(priceId);
     if (!select || !priceEl) return;
 
-    const selectedText = select.options[select.selectedIndex].text;
-    const label = selectedText.includes('—')
-        ? selectedText.split('—')[1].trim()
-        : '₹' + Number(select.value).toLocaleString('en-IN');
+    const card = select.closest(".product-variety-card");
+    const productId = card.dataset.productId;
 
-    priceEl.textContent = label;
+    const product = productsData.find(
+        p => p.product_id === productId
+    );
+
+    if (!product) return;
+
+    const selectedWeight = Number(select.value);
+
+    const originalWeight =
+        Number(product.weight.replace(/[^0-9.]/g, ''));
+
+    const calculatedPrice =
+        (product.price / originalWeight) * selectedWeight;
+
+    priceEl.textContent =
+        "₹" + Math.round(calculatedPrice).toLocaleString("en-IN");
 }
-
 // TOAST
 let toastTimer;
 function showToast(msg) {
@@ -360,6 +475,17 @@ function setupGroupedTileSlider(selector, groupSize = 3, direction = 'left') {
 
     if (cards.length <= groupSize) return;
 
+    // Pad cards to a multiple of groupSize to ensure perfect grid alignment and loop alignment
+    const originalCount = cards.length;
+    const remainder = originalCount % groupSize;
+    if (remainder !== 0) {
+        const padCount = groupSize - remainder;
+        for (let i = 0; i < padCount; i++) {
+            const padClone = cards[i % originalCount].cloneNode(true);
+            cards.push(padClone);
+        }
+    }
+
     const useRightMotion = direction === 'right' && cards.length === groupSize * 2;
 
     if (useRightMotion) {
@@ -466,9 +592,78 @@ function setupAboutRowExchange() {
 
 // INIT
 document.addEventListener('DOMContentLoaded', () => {
-    setupGroupedTileSlider('.why-grid');
+    setupGroupedTileSlider('.why-grid', 4);
     setupAboutRowExchange();
+fetch("/api/products")
+.then(response => response.json())
+.then(data => {
+    productsData = data;
 
+    console.log("API DATA:", data);
+
+    data.forEach(product => {
+
+        console.log(
+            "Product:",
+            product.product_name,
+            "Price:",
+            product.daily_price
+        );
+
+        if (product.product_name === "Cardamom") {
+            const el = document.getElementById("prod1price");
+            if (el) el.textContent = "₹" + product.daily_price;
+        }
+
+        if (product.product_name === "Pepper") {
+            const el = document.getElementById("prod2price");
+            if (el) el.textContent = "₹" + product.daily_price;
+        }
+
+        if (product.product_name === "Turmeric") {
+            const el = document.getElementById("prod3price");
+            if (el) el.textContent = "₹" + product.daily_price;
+        }
+
+        if (product.product_name === "Honey") {
+            const el = document.getElementById("prod7price");
+            if (el) el.textContent = "₹" + product.daily_price;
+        }
+
+        if (product.product_name === "Cloves") {
+    const el = document.getElementById("prod4price");
+    if (el) el.textContent = "₹" + product.daily_price;
+}
+
+if (product.product_name === "Ginger") {
+    const el = document.getElementById("prod9price");
+    if (el) el.textContent = "₹" + product.daily_price;
+}
+
+if (product.product_name === "Ghee") {
+    const el = document.getElementById("prod8price");
+    if (el) el.textContent = "₹" + product.daily_price;
+}
+
+if (product.product_name === "Tea") {
+    const el = document.getElementById("prod5price");
+    if (el) el.textContent = "₹" + product.daily_price;
+}
+
+if (product.product_name === "Coffee") {
+    const el = document.getElementById("prod6price");
+    if (el) el.textContent = "₹" + product.daily_price;
+}
+
+if (product.product_name === "Honey") {
+    const el = document.getElementById("prod7price");
+    if (el) el.textContent = "₹" + product.daily_price;
+}
+
+    });   // closes forEach
+
+})       // closes then(data => ...)
+.catch(error => console.error(error));
     // ENTER KEY FOR TRACE
     const batchInput = document.getElementById('batchInput');
     const productInput = document.getElementById('productInput');

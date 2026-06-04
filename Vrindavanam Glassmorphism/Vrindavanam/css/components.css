@@ -711,15 +711,17 @@
 }
 
 #why .why-grid .why-card {
-    flex: 0 0 calc((100% - (var(--tile-gap) * 2)) / 3);
+    flex: 0 0 clamp(180px, 30vw, 240px) !important;
     min-width: 0;
     animation: none !important;
 }
 
-#why .why-grid .why-card:hover,
-#why .why-grid .why-card.is-linked {
-    transform: none !important;
-    filter: none !important;
+@media (min-width: 901px) {
+    #why .why-grid .why-card {
+        flex: 0 0 calc((100% - 3 * var(--tile-gap)) / 4) !important;
+        width: calc((100% - 3 * var(--tile-gap)) / 4) !important;
+        max-width: none !important;
+    }
 }
 
 #why .why-grid .why-card:hover::before {
@@ -777,7 +779,7 @@
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--sage-light);
+    color: rgba(255, 255, 255, 0.65);
     margin-bottom: 0.4rem;
 }
 

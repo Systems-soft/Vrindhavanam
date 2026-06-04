@@ -328,6 +328,13 @@ section {
     z-index: 2;
 }
 
+#life-hills .featured-container,
+#life-hills .featured-image-wrap,
+#life-hills .featured-img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .featured-glow {
     position: absolute;
     inset: 30px;
@@ -449,7 +456,7 @@ section {
     font-size: 0.65rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--sage-light);
+    color: var(--cream);
     margin-top: 0.5rem;
 }
 
@@ -464,6 +471,29 @@ section {
 }
 
 .journey-step:last-child { border-right: none; }
+
+.journey-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.journey-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 0.3rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.journey-value {
+    font-size: 0.88rem;
+    color: var(--cream);
+    font-weight: 400;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
 
 .trace-batch-info {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
@@ -529,12 +559,12 @@ section {
 #why::before {
     content: "";
     position: absolute;
-    inset: -22px;
+    inset: -8px;
     background:
-        radial-gradient(circle at 50% 24%, rgba(232, 201, 122, 0.16), transparent 34%),
+        radial-gradient(circle at 50% 24%, rgba(232, 201, 122, 0.1), transparent 34%),
         url("../images/cow.jpg") center/cover no-repeat;
-    filter: blur(4px) brightness(0.98) contrast(1.12) saturate(0.92);
-    transform: scale(1.03);
+    filter: brightness(1.06) contrast(1.18) saturate(1.02);
+    transform: scale(1.01);
     z-index: -2;
 }
 
@@ -544,10 +574,10 @@ body #why::after {
     inset: 0;
     pointer-events: none;
     background:
-        linear-gradient(180deg, rgba(2, 8, 3, 0.2) 0%, rgba(6, 20, 8, 0.34) 42%, rgba(0, 0, 0, 0.5) 100%),
-        radial-gradient(circle at 50% 30%, rgba(255, 246, 210, 0.13) 0%, transparent 34%),
-        radial-gradient(circle at 50% 62%, transparent 28%, rgba(0, 0, 0, 0.38) 100%);
-    backdrop-filter: blur(1.2px) saturate(1.08);
+        linear-gradient(180deg, rgba(2, 8, 3, 0.12) 0%, rgba(6, 20, 8, 0.24) 42%, rgba(0, 0, 0, 0.42) 100%),
+        radial-gradient(circle at 50% 30%, rgba(255, 246, 210, 0.1) 0%, transparent 34%),
+        radial-gradient(circle at 50% 62%, transparent 34%, rgba(0, 0, 0, 0.32) 100%);
+    backdrop-filter: saturate(1.1);
     z-index: -1;
 }
 
@@ -569,15 +599,26 @@ body #why::after {
 }
 
 #why .why-card {
-    background-color: rgba(9, 24, 10, 0.58) !important;
-    border: 1px solid rgba(232, 201, 122, 0.46) !important;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.055)),
+        rgba(8, 22, 9, 0.38) !important;
+    background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.055)) !important;
+    border: 1px solid rgba(241, 229, 172, 0.36) !important;
     color: var(--cream) !important;
-    backdrop-filter: blur(20px) saturate(1.18);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(24px) saturate(1.18);
+    -webkit-backdrop-filter: blur(24px) saturate(1.18);
+    box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.34),
+        0 0 24px rgba(241, 229, 172, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.07),
+        inset 0 1px 2px rgba(255, 255, 255, 0.24) !important;
 }
 
 #why .why-card:hover {
-    background-color: rgba(14, 38, 15, 0.66) !important;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.075)),
+        rgba(10, 29, 12, 0.42) !important;
+    background-image: linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.075)) !important;
     border-color: rgba(232, 201, 122, 0.72) !important;
 }
 
@@ -590,16 +631,21 @@ body #why::after {
 
 #why .why-title {
     color: var(--gold-light) !important;
+    font-size: clamp(1.02rem, 0.88rem + 0.36vw, 1.18rem);
+    line-height: 1.25;
+    margin-bottom: 0.55rem;
     text-shadow: 0 2px 14px rgba(0, 0, 0, 0.66);
 }
 
 #why .why-desc {
     color: rgba(247, 242, 234, 0.94) !important;
+    font-size: clamp(0.86rem, 0.78rem + 0.18vw, 0.96rem);
+    line-height: 1.58;
     text-shadow: 0 1px 12px rgba(0, 0, 0, 0.58);
 }
 
 #why .why-icon {
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.58));
+    display: none !important;
 }
 
 .why-grid {
@@ -872,7 +918,8 @@ footer::after {
     }
 
     .nav-logo .brand-subtitle {
-        font-size: 0.55rem;
+        font-size: clamp(0.66rem, 2.5vw, 0.82rem);
+        letter-spacing: 0.12em;
     }
 
     .nav-right {
@@ -1007,6 +1054,21 @@ footer::after {
     .testimonial-card,
     .why-card {
         padding: 1.35rem;
+    }
+
+    #why .why-grid {
+        overflow-x: auto;
+        padding-bottom: 0.35rem;
+        scrollbar-width: thin;
+    }
+
+    #why .why-grid .tile-slider-track {
+        gap: 1rem;
+        transform: none !important;
+    }
+
+    #why .why-grid .why-card {
+        flex: 0 0 min(74vw, 280px);
     }
 
     .trace-timeline {
