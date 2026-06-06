@@ -316,32 +316,34 @@ const productDetailCatalog = {
         description: 'Finely prepared turmeric suited for daily cooking and warm blends. The grade is dependable, clean, and easy to measure in everyday recipes.',
     },
     'traditional-ghee': {
-        name: 'Traditional Ghee',
-        label: 'Classic',
-        category: 'ghee',
-        price: 760,
-        image: 'images/gheedetail1.jpg',
-        backHref: 'ghee.html',
-        description: 'A pure everyday ghee with rounded aroma and smooth depth. Made for rice, rotis, roasting, and simple meals where clean richness matters.',
-    },
-    'golden-reserve-ghee': {
-        name: 'Golden Reserve Ghee',
-        label: 'Reserve',
-        category: 'ghee',
-        price: 760,
-        image: 'images/gheedetail2.jpg',
-        backHref: 'ghee.html',
-        description: 'Slow-finished ghee with deeper fragrance and a premium table presence. It brings a golden aroma to sweets, finishing, and festive cooking.',
-    },
-    'cooking-grade-ghee': {
-        name: 'Cooking Grade Ghee',
-        label: 'Kitchen',
-        category: 'ghee',
-        price: 760,
-        image: 'images/gheedetail3.jpg',
-        backHref: 'ghee.html',
-        description: 'A dependable kitchen ghee for daily cooking, roasting, and tempering. Built for steady flavor and practical use across everyday meals.',
-    },
+    name: 'Traditional Ghee',
+    label: 'Classic',
+    category: 'ghee',
+    price: 2000,
+    image: 'images/gheedetail1.jpg',
+    backHref: 'ghee.html',
+    description: 'A pure everyday ghee with rounded aroma and smooth depth. Made for rice, rotis, roasting, and simple meals where clean richness matters.',
+},
+
+'golden-reserve-ghee': {
+    name: 'Golden Reserve Ghee',
+    label: 'Reserve',
+    category: 'ghee',
+    price: 4500,
+    image: 'images/gheedetail2.jpg',
+    backHref: 'ghee.html',
+    description: 'Slow-finished ghee with deeper fragrance and a premium table presence. It brings a golden aroma to sweets, finishing, and festive cooking.',
+},
+
+'cooking-grade-ghee': {
+    name: 'Cooking Grade Ghee',
+    label: 'Kitchen',
+    category: 'ghee',
+    price: 8000,
+    image: 'images/gheedetail3.jpg',
+    backHref: 'ghee.html',
+    description: 'A dependable kitchen ghee for daily cooking, roasting, and tempering. Built for steady flavor and practical use across everyday meals.',
+},
     'highland-fresh-ginger': {
         name: 'Highland Fresh Ginger',
         label: 'Fresh',
@@ -582,20 +584,19 @@ function addProductPageCartItem(name, price, image, category) {
     showToast(name + ' added to cart');
 }
 
-if (typeof window.addToCart !== 'function') {
-    window.addToCart = function addToCart(name, price) {
-        const category = getVarietyCategory(name);
-        addProductPageCartItem(name, parseCartPrice(price), getProductPageImageForName(name), category);
-    };
-}
+window.addToCart = function addToCart(name, price, image) {
+    const category = getVarietyCategory(name);
+    const priceValue = typeof price === 'number' ? price : parseCartPrice(price);
+    addProductPageCartItem(String(name), priceValue, image || getProductPageImageForName(name), category);
+};
 
-window.removeFromCart = window.removeFromCart || function removeFromCart(key) {
+window.removeFromCart = function removeFromCart(key) {
     productPageCart = productPageCart.filter(item => item.key !== key);
     saveProductPageCart();
     updateProductPageCartUI();
 };
 
-window.changeQty = window.changeQty || function changeQty(key, delta) {
+window.changeQty = function changeQty(key, delta) {
     const item = productPageCart.find(cartItem => cartItem.key === key);
     if (!item) return;
 
@@ -616,18 +617,19 @@ function addVarietyTileToCart(button) {
     let name = nameEl?.textContent.trim() || 'Product Variety';
     const pageTitle = document.querySelector('.product-page .section-title')?.textContent || name;
     const category = getVarietyCategory(pageTitle + ' ' + name);
-    const defaults = varietyCartDefaults[category];
-    console.log("CATEGORY =", category);
-console.log("NAME =", name);
-    const image = card.querySelector('.product-variety-image')?.getAttribute('src') || defaults.image;
 
+    const image = card.querySelector('.product-variety-image')?.getAttribute('src') || getProductPageImageForName(name);
     const select = card.querySelector('.weight-select');
-    let price = defaults.price;
+    let price = 0;
+
     if (select) {
-        price = Number(select.value) || defaults.price;
+        price = Number(select.value) || 0;
         const selectedText = select.options[select.selectedIndex].text;
         const weight = selectedText.split('—')[0].trim();
         name = `${name} (${weight})`;
+    } else {
+        const priceText = card.querySelector('.product-variety-price')?.textContent || card.querySelector('.product-price')?.textContent || '';
+        price = parseCartPrice(priceText);
     }
 
     addProductPageCartItem(name, price, image, category);
