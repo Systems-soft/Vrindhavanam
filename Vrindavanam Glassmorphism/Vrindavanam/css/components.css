@@ -37,7 +37,7 @@
 
 .brand-subtitle {
     font-family: 'Jost', sans-serif;
-    font-size: 0.56em;
+    font-size: 0.62em;
     font-weight: 400;
     color: var(--gold);
     letter-spacing: 0.2em;
@@ -224,6 +224,10 @@
 .section-title em {
     color: var(--sage);
     font-style: italic;
+}
+
+#testimonials .section-title em {
+    color: var(--cream);
 }
 
 #testimonials .section-title {

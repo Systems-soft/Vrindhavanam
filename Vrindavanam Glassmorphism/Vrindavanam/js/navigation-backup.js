@@ -584,20 +584,19 @@ function addProductPageCartItem(name, price, image, category) {
     showToast(name + ' added to cart');
 }
 
-if (typeof window.addToCart !== 'function') {
-    window.addToCart = function addToCart(name, price) {
-        const category = getVarietyCategory(name);
-        addProductPageCartItem(name, parseCartPrice(price), getProductPageImageForName(name), category);
-    };
-}
+window.addToCart = function addToCart(name, price, image) {
+    const category = getVarietyCategory(name);
+    const priceValue = typeof price === 'number' ? price : parseCartPrice(price);
+    addProductPageCartItem(String(name), priceValue, image || getProductPageImageForName(name), category);
+};
 
-window.removeFromCart = window.removeFromCart || function removeFromCart(key) {
+window.removeFromCart = function removeFromCart(key) {
     productPageCart = productPageCart.filter(item => item.key !== key);
     saveProductPageCart();
     updateProductPageCartUI();
 };
 
-window.changeQty = window.changeQty || function changeQty(key, delta) {
+window.changeQty = function changeQty(key, delta) {
     const item = productPageCart.find(cartItem => cartItem.key === key);
     if (!item) return;
 
@@ -618,18 +617,19 @@ function addVarietyTileToCart(button) {
     let name = nameEl?.textContent.trim() || 'Product Variety';
     const pageTitle = document.querySelector('.product-page .section-title')?.textContent || name;
     const category = getVarietyCategory(pageTitle + ' ' + name);
-    const defaults = varietyCartDefaults[category];
-    console.log("CATEGORY =", category);
-console.log("NAME =", name);
-    const image = card.querySelector('.product-variety-image')?.getAttribute('src') || defaults.image;
 
+    const image = card.querySelector('.product-variety-image')?.getAttribute('src') || getProductPageImageForName(name);
     const select = card.querySelector('.weight-select');
-    let price = defaults.price;
+    let price = 0;
+
     if (select) {
-        price = Number(select.value) || defaults.price;
+        price = Number(select.value) || 0;
         const selectedText = select.options[select.selectedIndex].text;
         const weight = selectedText.split('—')[0].trim();
         name = `${name} (${weight})`;
+    } else {
+        const priceText = card.querySelector('.product-variety-price')?.textContent || card.querySelector('.product-price')?.textContent || '';
+        price = parseCartPrice(priceText);
     }
 
     addProductPageCartItem(name, price, image, category);
@@ -757,11 +757,9 @@ function getProductDetailHrefForCard(card) {
     }
     const backPath = (window.location.pathname.split('/').pop() || 'index.html') + '#' + card.id;
 
-  if (productDetailCatalog[key]) {
-    const productId = card.dataset.productId || '';
-
-    return `product-detail.html?product=${encodeURIComponent(key)}&productId=${encodeURIComponent(productId)}&back=${encodeURIComponent(backPath)}`;
-}
+    if (productDetailCatalog[key]) {
+        return `product-detail.html?product=${encodeURIComponent(key)}&back=${encodeURIComponent(backPath)}`;
+    }
 
     const label = card.querySelector('.product-variety-label')?.textContent.trim() || 'Estate Selection';
     const description = card.querySelector('.product-variety-copy')?.textContent.trim() || '';
@@ -782,8 +780,8 @@ function getProductDetailHrefForCard(card) {
     return `product-detail.html?${params.toString()}`;
 }
 
-async function ensureProductVarietyDetailButtons() {
-    for (const card of document.querySelectorAll('.product-variety-card')) {
+function ensureProductVarietyDetailButtons() {
+    document.querySelectorAll('.product-variety-card').forEach(card => {
         const buyButton = card.querySelector(':scope > .product-buy-btn') || card.querySelector('.product-variety-actions .product-buy-btn');
         const existingDetailsButton = card.querySelector('.cardamom-details-btn, .product-details-btn');
         const nameEl = card.querySelector('.product-variety-name');
@@ -791,13 +789,6 @@ async function ensureProductVarietyDetailButtons() {
         const pageTitle = document.querySelector('.product-page .section-title')?.textContent || name;
         const category = getVarietyCategory(`${pageTitle} ${name}`);
         const defaults = varietyCartDefaults[category] || varietyCartDefaults.cardamom;
-        const productId = card.dataset.productId;
-
-const dbProducts = productId
-    ? await getProductFromDatabase(productId)
-    : [];
-
-console.log("CARD PRODUCT:", name, productId, dbProducts);
         let actions = card.querySelector('.product-variety-actions');
 
         // Ensure card has an ID so hash fragments can navigate to it
@@ -848,40 +839,34 @@ console.log("CARD PRODUCT:", name, productId, dbProducts);
         }
 
         // Add dropdown if not present
-        
-            let select = card.querySelector('.weight-select');
-
-if (!select) {
-    select = document.createElement('select');
-    select.className = 'weight-select';
-    select.style.margin = '0.5rem 0';
-    select.style.width = '100%';
-    select.style.maxWidth = '180px';
-    select.style.boxSizing = 'border-box';
-
-    if (actions) {
-        card.insertBefore(select, actions);
-    } else {
-        card.appendChild(select);
-    }
-}
-
-// ALWAYS populate from database
-select.innerHTML = '';
-console.log("BEFORE LOOP", name, dbProducts.length);
-dbProducts.forEach((item, idx) => {
-    const optEl = document.createElement('option');
-
-    optEl.value = item.price;
-    optEl.textContent =
-        `${item.weight} — ${formatProductPagePrice(item.price)}`;
-
-    if (idx === 0) {
-        optEl.selected = true;
-    }
-
-    select.appendChild(optEl);
-});
+        let select = card.querySelector('.weight-select');
+        if (!select) {
+            select = document.createElement('select');
+            select.className = 'weight-select';
+            select.style.margin = '0.5rem 0';
+            select.style.width = '100%';
+            select.style.maxWidth = '180px';
+            select.style.boxSizing = 'border-box';
+            
+            const weightOptions = [
+                { weight: '50g', multiplier: 0.2 },
+                { weight: '100g', multiplier: 0.4 },
+                { weight: '250g', multiplier: 1.0 },
+                { weight: '500g', multiplier: 1.8 },
+                { weight: '1kg', multiplier: 3.2 }
+            ];
+            
+            weightOptions.forEach((opt, idx) => {
+                const optEl = document.createElement('option');
+                const calculatedPrice = Math.round(defaults.price * opt.multiplier);
+                optEl.value = calculatedPrice;
+                optEl.textContent = `${opt.weight} — ${formatProductPagePrice(calculatedPrice)}`;
+                if (idx === 0) {
+                    optEl.selected = true;
+                }
+                select.appendChild(optEl);
+            });
+            
             const updateCardPrices = () => {
                 const selectedOption = select.options[select.selectedIndex];
                 const weightText = selectedOption ? selectedOption.text.split('—')[0].trim() : '';
@@ -903,6 +888,7 @@ dbProducts.forEach((item, idx) => {
             } else {
                 card.appendChild(select);
             }
+        }
 
         const detailsButton = existingDetailsButton || document.createElement('a');
         detailsButton.href = getProductDetailHrefForCard(card);
@@ -919,26 +905,16 @@ dbProducts.forEach((item, idx) => {
         } else if (!existingDetailsButton) {
             card.appendChild(detailsButton);
         }
-    }
+    });
 }
-async function getProductFromDatabase(productId) {
-    try {
-        const response = await fetch('/api/products');
-        const products = await response.json();
 
-        return products.filter(
-            p => p.product_id === productId
-        );
-    } catch (err) {
-        console.error(err);
-        return [];
-    }
-}
 async function renderProductDetailPage() {
     const detailRoot = document.getElementById('productDetailPage');
     if (!detailRoot) return;
 
     const product = getProductDetailFromParams();
+
+    console.log("DETAIL PAGE PRODUCT:", product);
 
     const productId =
         new URLSearchParams(window.location.search)
@@ -946,18 +922,8 @@ async function renderProductDetailPage() {
 
     console.log("PRODUCT ID:", productId);
 
-    const dbProducts =
-        productId
-            ? await getProductFromDatabase(productId)
-            : [];
-
-    console.log("DB PRODUCTS:", dbProducts);
-    console.table(dbProducts);
-
     const fallback = document.getElementById('productDetailFallback');
-
-    console.log("DETAIL PAGE PRODUCT:", product);
-
+    
     if (!product) {
         detailRoot.hidden = true;
         if (fallback) fallback.hidden = true;
@@ -990,49 +956,48 @@ async function renderProductDetailPage() {
     if (floatingBack) floatingBack.href = backUrl;
 
     // Add weight select dropdown for details page
-   // Add weight select dropdown for details page
-let select = document.getElementById('detailWeightSelect');
-
-if (!select && buyButton) {
-    select = document.createElement('select');
-    select.id = 'detailWeightSelect';
-    select.className = 'weight-select';
-    select.style.margin = '1rem 0';
-    select.style.padding = '0.5rem';
-    select.style.width = '100%';
-    select.style.maxWidth = '240px';
-    select.style.display = 'block';
-
-    buyButton.insertAdjacentElement('beforebegin', select);
-}
-
-if (select) {
-    select.innerHTML = '';
-
-    dbProducts.forEach((item, idx) => {
-        const optEl = document.createElement('option');
-
-        optEl.value = item.price;
-        optEl.textContent =
-            `${item.weight} — ${formatProductPagePrice(item.price)}`;
-
-        if (idx === 0) {
-            optEl.selected = true;
-        }
-
-        select.appendChild(optEl);
-    });
-
-    if (price) {
-        price.textContent = formatProductPagePrice(select.value);
+    let select = document.getElementById('detailWeightSelect');
+    if (!select && buyButton) {
+        select = document.createElement('select');
+        select.id = 'detailWeightSelect';
+        select.className = 'weight-select';
+        select.style.margin = '1rem 0';
+        select.style.padding = '0.5rem';
+        select.style.width = '100%';
+        select.style.maxWidth = '240px';
+        select.style.display = 'block';
+        buyButton.insertAdjacentElement('beforebegin', select);
     }
 
-    select.addEventListener('change', () => {
-        if (price) {
-            price.textContent = formatProductPagePrice(select.value);
-        }
-    });
-}
+    if (select) {
+        select.innerHTML = '';
+        const weightOptions = [
+            { weight: '50g', multiplier: 0.2 },
+            { weight: '100g', multiplier: 0.4 },
+            { weight: '250g', multiplier: 1.0 },
+            { weight: '500g', multiplier: 1.8 },
+            { weight: '1kg', multiplier: 3.2 }
+        ];
+        
+        weightOptions.forEach((opt, idx) => {
+            const optEl = document.createElement('option');
+            const weightNumber = parseFloat(opt.weight.replace(/[^\d.]/g, ''));
+            const calculatedPrice = Math.round(Number(product.price) * opt.multiplier);
+            optEl.value = calculatedPrice;
+            optEl.textContent = `${opt.weight} — ${formatProductPagePrice(calculatedPrice)}`;
+            if (idx === 0) {
+                optEl.selected = true;
+            }
+            select.appendChild(optEl);
+        });
+
+        // Set initial price to matches default option (first option)
+        if (price) price.textContent = formatProductPagePrice(select.value);
+
+        select.addEventListener('change', () => {
+            if (price) price.textContent = formatProductPagePrice(select.value);
+        });
+    }
 
     if (buyButton && select) {
         const newBuyButton = buyButton.cloneNode(true);
@@ -1054,7 +1019,6 @@ if (select) {
     detailRoot.hidden = false;
     if (fallback) fallback.hidden = true;
 }
-
 
 // SMOOTH SCROLL (Mostly handled by CSS, but can add offset logic here if needed)
 document.addEventListener('DOMContentLoaded', () => {
