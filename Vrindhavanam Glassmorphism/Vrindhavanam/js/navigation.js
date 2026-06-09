@@ -667,17 +667,12 @@ console.log("NAME =", name);
 
     const select = card.querySelector('.weight-select');
     let price = defaults.price;
-  if (select && select.selectedIndex >= 0) {
-    price = Number(select.value) || defaults.price;
-
-    const selectedOption = select.options[select.selectedIndex];
-
-    if (selectedOption) {
-        const selectedText = selectedOption.text;
+    if (select) {
+        price = Number(select.value) || defaults.price;
+        const selectedText = select.options[select.selectedIndex].text;
         const weight = selectedText.split('—')[0].trim();
         name = `${name} (${weight})`;
     }
-}
 
     addProductPageCartItem(name, price, image, category);
 }
@@ -982,7 +977,17 @@ dbProducts.forEach((item, idx) => {
     }
 }
 async function getProductFromDatabase(productId) {
-    return [];
+    try {
+        const response = await fetch('./data/products.json');
+        const products = await response.json();
+
+        return products.filter(
+            p => p.product_id === productId
+        );
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
 }
 async function renderProductDetailPage() {
     const detailRoot = document.getElementById('productDetailPage');

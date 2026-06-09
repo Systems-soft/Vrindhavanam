@@ -319,7 +319,7 @@ function traceSpice() {
 // 1. LOAD PRODUCTS FIRST
 document.addEventListener("DOMContentLoaded", () => {
 
-    fetch("/api/products")
+    fetch("./data/products.json")
     .then(res => res.json())
     .then(data => {
 
@@ -862,7 +862,7 @@ function setupAboutRowExchange() {
 document.addEventListener('DOMContentLoaded', () => {
     setupGroupedTileSlider('.why-grid', 4);
     setupAboutRowExchange();
-/*fetch("/api/products")
+/*fetch("./data/products.json")
 .then(response => response.json())
 .then(data => {
     productsData = data;
