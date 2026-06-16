@@ -1,0 +1,25 @@
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior.
+    at Connection.protocolError (E:\Glassmorphism\node_modules\mysql2\lib\base\connection.js:453:17)
+    at Connection.handlePacket (E:\Glassmorphism\node_modules\mysql2\lib\base\connection.js:523:14)
+    at PacketParser.onPacket (E:\Glassmorphism\node_modules\mysql2\lib\base\connection.js:102:12)
+    at PacketParser.executeStart (E:\Glassmorphism\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (E:\Glassmorphism\node_modules\mysql2\lib\base\connection.js:109:25)
+    at Socket.emit (node:events:524:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at TCP.onStreamRead (node:internal/stream_base_commons:191:23)
+Emitted 'error' event on Connection instance at:
+    at Connection.protocolError (E:\Glassmorphism\node_modules\mysql2\lib\base\connection.js:456:10)
+    at Connection.handlePacket (E:\Glassmorphism\node_modules\mysql2\lib\base\connection.js:523:14)
+    [... lines matching original stack trace ...]
+    at TCP.onStreamRead (node:internal/stream_base_commons:191:23) {
+  fatal: true,
+  code: 4031
+}
+
+Node.js v20.20.2

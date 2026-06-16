@@ -27,7 +27,6 @@ function addToCart(name, price, emoji, selectId) {
     }
     console.log("Cart array:", cart);
     updateCartUI();
-    openCart();
     showToast(finalName + ' added to cart');
 }
 function addToCartFromAPI(productName) {
@@ -190,131 +189,33 @@ function traceSpice() {
     const product = rawProdVal || 'Cardamom';
     resultBatch.textContent = batch;
 
-    let match = null;
-    if (productsData && productsData.length > 0) {
-        if (rawBatchVal) {
-            // Find by product ID (case-insensitive)
-            match = productsData.find(p => p.product_id.toLowerCase() === batchVal);
-            if (!match) {
-                // Find if the batch code contains or is contained in the product ID
-                match = productsData.find(p => batchVal.includes(p.product_id.toLowerCase()) || p.product_id.toLowerCase().includes(batchVal));
-            }
-            if (!match && batchVal.includes('crd')) {
-                // Fallback for default VRD-2024-CRD-12
-                match = productsData.find(p => p.product_name.toLowerCase() === 'cardamom');
-            }
-        }
-        if (!match && rawProdVal) {
-            // Find by product name
-            match = productsData.find(p => p.product_name.toLowerCase().includes(prodVal) || prodVal.includes(p.product_name.toLowerCase()));
-        }
+    // Always fail search per requirements
+    // Show Batch Not Verified label
+    if (verifiedLabel) {
+        verifiedLabel.textContent = "Batch Not Verified";
+        verifiedLabel.className = "badge-warning-status";
+        verifiedLabel.style.display = "block";
+    }
+    if (verifiedBadge) {
+        verifiedBadge.style.display = "none";
     }
 
-    if (match) {
-        // Show verified badge, hide unverified warning
-        if (verifiedLabel) {
-            verifiedLabel.style.display = "none";
-        }
-        if (verifiedBadge) {
-            verifiedBadge.style.display = "inline-block";
-            verifiedBadge.textContent = "✓ Certified Organic";
-        }
+    // Inside dropdown sections (steps), show "Product Not Found"
+    const notFoundHtml = `<span class="badge-warning-status" style="margin: 0.5rem auto 0; display: inline-block;">Product Not Found</span>`;
+    if (farmEl) farmEl.innerHTML = notFoundHtml;
+    if (dateEl) dateEl.innerHTML = notFoundHtml;
+    if (dryEl) dryEl.innerHTML = notFoundHtml;
+    if (labEl) labEl.innerHTML = notFoundHtml;
+    if (packEl) packEl.innerHTML = notFoundHtml;
 
-        // Fill in journey steps
-        if (farmEl) farmEl.innerHTML = "Vrindhavanam Estate, Idukki, Kerala";
-        
-        // Parse and format harvest date
-        let formattedDate = "Nov 12, 2024";
-        let harvestDateObj = null;
-        if (match.date) {
-            harvestDateObj = new Date(match.date);
-            if (!isNaN(harvestDateObj.getTime())) {
-                const options = { year: 'numeric', month: 'short', day: 'numeric' };
-                formattedDate = harvestDateObj.toLocaleDateString('en-US', options);
-            }
-        }
-        if (dateEl) dateEl.textContent = formattedDate;
+    // Metric fields replace with "Loading..."
+    const loadingHtml = `<span style="opacity: 0.7;">Loading...</span>`;
+    if (infoRainfall) infoRainfall.innerHTML = loadingHtml;
+    if (infoAltitude) infoAltitude.innerHTML = loadingHtml;
+    if (infoPurity) infoPurity.innerHTML = loadingHtml;
 
-        // Dynamic Drying/Processing method based on product type
-        let dryingMethod = "Sun-Dried, 6 Days";
-        const prodNameLower = match.product_name.toLowerCase();
-        if (prodNameLower.includes('tea')) {
-            dryingMethod = "Orthodox Oxidized & Pan-Fired";
-        } else if (prodNameLower.includes('honey')) {
-            dryingMethod = "Cold Extracted & Unfiltered";
-        } else if (prodNameLower.includes('cardamom')) {
-            dryingMethod = "Flue-Cured (Retention Green)";
-        } else if (match.notes) {
-            dryingMethod = match.notes;
-        }
-        if (dryEl) dryEl.textContent = dryingMethod;
-
-        // Compute lab & packaging date offset from harvest date
-        let labDateStr = "Nov 28, 2024";
-        let packDateStr = "Dec 1, 2024";
-        if (harvestDateObj && !isNaN(harvestDateObj.getTime())) {
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            
-            const labDate = new Date(harvestDateObj);
-            labDate.setDate(labDate.getDate() + 3);
-            labDateStr = labDate.toLocaleDateString('en-US', options);
-            
-            const packDate = new Date(harvestDateObj);
-            packDate.setDate(packDate.getDate() + 5);
-            packDateStr = packDate.toLocaleDateString('en-US', options);
-        }
-        if (labEl) labEl.innerHTML = `${labDateStr} <br><small style="color: #90c070;">Passed (Purity & Moisture)</small>`;
-        if (packEl) packEl.innerHTML = `${packDateStr} <br><small style="color: rgba(255,255,255,0.7);">Hermetic Pouch/Jar</small>`;
-
-        // Compute environmental parameters
-        let altitude = "1,800m";
-        let rainfall = "2,400mm/yr";
-        if (prodNameLower.includes('tea')) {
-            altitude = "1,850m";
-            rainfall = "2,600mm/yr";
-        } else if (prodNameLower.includes('honey')) {
-            altitude = "1,400m";
-            rainfall = "2,200mm/yr";
-        } else if (prodNameLower.includes('cardamom')) {
-            altitude = "1,200m";
-            rainfall = "2,500mm/yr";
-        }
-        if (infoAltitude) infoAltitude.textContent = altitude;
-        if (infoRainfall) infoRainfall.textContent = rainfall;
-
-        // Compute purity score based on database factor field
-        const factorVal = Number(match.factor) || 5;
-        const purityScore = (95 + (factorVal * 0.5)).toFixed(1) + "%";
-        if (infoPurity) infoPurity.textContent = purityScore;
-
-        traceResult.classList.add('show');
-        showToast(`Traced: ${match.product_name} (${match.variety_name}) — Verified ✅`);
-    } else {
-        // Show Batch Not Verified label in soft red warning badge
-        if (verifiedLabel) {
-            verifiedLabel.textContent = "Batch Not Verified";
-            verifiedLabel.className = "badge-warning-status";
-            verifiedLabel.style.display = "block";
-        }
-        if (verifiedBadge) {
-            verifiedBadge.style.display = "none";
-        }
-
-        // Inside dropdown sections (steps), show "Product not found"
-        const notFoundHtml = `<span class="badge-warning-status" style="margin: 0.5rem auto 0; display: inline-block;">Product not found</span>`;
-        if (farmEl) farmEl.innerHTML = notFoundHtml;
-        if (dateEl) dateEl.innerHTML = notFoundHtml;
-        if (dryEl) dryEl.innerHTML = notFoundHtml;
-        if (labEl) labEl.innerHTML = notFoundHtml;
-        if (packEl) packEl.innerHTML = notFoundHtml;
-
-        if (infoRainfall) infoRainfall.innerHTML = `<span class="badge-warning-status" style="margin:0; display:inline-block;">Unverified</span>`;
-        if (infoAltitude) infoAltitude.innerHTML = `<span class="badge-warning-status" style="margin:0; display:inline-block;">Unverified</span>`;
-        if (infoPurity) infoPurity.innerHTML = `<span class="badge-warning-status" style="margin:0; display:inline-block;">Unverified</span>`;
-
-        traceResult.classList.add('show');
-        showToast(`Trace Failed: Batch "${batch}" Not Verified ⚠️`);
-    }
+    traceResult.classList.add('show');
+    showToast(`Trace Failed: Batch Not Verified ⚠️`);
 }
 
 

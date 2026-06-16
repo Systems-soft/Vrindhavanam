@@ -8,26 +8,17 @@ const host = '0.0.0.0';
 const port = Number(process.env.PORT || 8082);
 const root = __dirname;
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: 'MySql@12345',
-    database: 'vrindhavanam_db'
+    database: 'vrindhavanam_db',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect(err => {
-
-    if (err) {
-
-        console.log("DB Error:", err);
-
-    } else {
-
-        console.log("MySQL Connected ✅");
-
-    }
-
-});
+console.log("MySQL Pool Created ✅");
 
 function excelDateToJSDate(serial) {
 

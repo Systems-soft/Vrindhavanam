@@ -1,0 +1,269 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: #eff6eb;
+  background:
+    radial-gradient(circle at top, rgba(92, 128, 84, 0.35), transparent 40%),
+    linear-gradient(160deg, #08120b 0%, #0f1d13 45%, #1a2617 100%);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { min-height: 100%; margin: 0; }
+body { min-height: 100vh; }
+button, input { font: inherit; }
+a { color: inherit; text-decoration: none; }
+
+.admin-shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+.admin-shell.is-collapsed { grid-template-columns: 84px minmax(0, 1fr); }
+.admin-sidebar {
+  padding: 1.25rem;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  background: rgba(3, 10, 4, 0.58);
+  backdrop-filter: blur(18px);
+  overflow: auto;
+}
+.admin-sidebar__brand { display:flex; align-items:center; gap:0.85rem; margin-bottom:1rem; }
+.admin-sidebar__logo {
+  width:2.8rem;
+  height:2.8rem;
+  object-fit:cover;
+  border-radius:0.9rem;
+  border:1px solid rgba(212,175,55,0.35);
+  box-shadow:0 10px 24px rgba(0,0,0,0.28);
+}
+.admin-sidebar__brand p,.admin-eyebrow,.auth-copy,.admin-hero p,.admin-panel p,.admin-sidebar__brand strong { margin:0; }
+.admin-sidebar__brand p { color:rgba(239,246,235,0.68); font-size:0.85rem; }
+.admin-sidebar__toggle {
+  width:100%; margin-bottom:1rem; border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.06); color:inherit; border-radius:0.9rem; padding:0.7rem; cursor:pointer;
+}
+.admin-sidebar__nav { display:grid; gap:0.45rem; }
+.admin-sidebar__link {
+  display:flex; align-items:center; gap:0.7rem; padding:0.75rem 0.8rem; border-radius:0.9rem;
+  color:rgba(239,246,235,0.8);
+}
+.admin-sidebar__link.is-active { background:rgba(215,181,109,0.15); color:#fff; }
+.admin-sidebar__dot { width:0.55rem; height:0.55rem; border-radius:50%; background:currentColor; opacity:0.75; }
+.admin-shell__main { min-width:0; }
+.admin-header, .admin-content { padding:1.5rem; }
+.admin-header {
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,0.08); background:rgba(8,18,11,0.45); backdrop-filter:blur(20px);
+}
+.admin-eyebrow { text-transform:uppercase; letter-spacing:0.16em; color:#d7b56d; font-size:0.72rem; margin-bottom:0.45rem; }
+.admin-header h1,.admin-hero h2,.auth-card h1,.admin-panel h3 { margin:0; }
+.admin-header__actions,.admin-chip-row { display:flex; flex-wrap:wrap; gap:0.65rem; }
+.admin-button,.admin-chip {
+  border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.07); color:#eff6eb; border-radius:999px; padding:0.75rem 1rem;
+}
+.admin-button { cursor:pointer; }
+.admin-button--ghost { background:transparent; }
+.admin-button--full { width:100%; border-radius:1rem; background:linear-gradient(135deg,#d7b56d,#6ea66a); color:#08120b; font-weight:700; }
+.admin-dashboard {
+  display:grid;
+  gap:1.25rem;
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+.admin-dashboard--home::before,
+.admin-dashboard--home::after,
+.auth-page::before,
+.auth-page::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.admin-dashboard--home::before {
+  background:
+    linear-gradient(180deg, rgba(26,26,26,0.42), rgba(31,95,59,0.12)),
+    radial-gradient(circle at top right, rgba(212,175,55,0.16), transparent 26%),
+    radial-gradient(circle at center, rgba(255,255,255,0.03), transparent 40%),
+    url('/admin2.jpg') center center / cover no-repeat;
+  transform:scale(1.03);
+  animation: adminBgFloat 24s ease-in-out infinite alternate;
+  filter: brightness(0.85) contrast(1.15) saturate(1.1);
+  z-index:-2;
+}
+.admin-dashboard--home::after {
+  background:
+    linear-gradient(135deg, rgba(0,0,0,0.36), rgba(0,0,0,0.12)),
+    radial-gradient(circle at center, transparent 34%, rgba(0,0,0,0.62) 100%);
+  z-index:-1;
+}
+.admin-hero,.admin-panel,.admin-card {
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:1.4rem;
+  box-shadow:0 20px 50px rgba(0,0,0,0.18);
+  backdrop-filter: blur(18px);
+}
+.admin-hero {
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  padding:1.4rem;
+  background:linear-gradient(135deg, rgba(15, 24, 18, 0.48), rgba(15, 24, 18, 0.16));
+}
+.admin-hero__panel {
+  min-width:220px;
+  display:grid;
+  gap:0.35rem;
+  align-content:start;
+  padding:1rem;
+  border-radius:1rem;
+  background:rgba(215,181,109,0.08);
+  border:1px solid rgba(212,175,55,0.12);
+}
+.admin-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+.admin-card {
+  padding:1.1rem;
+  background:rgba(18, 24, 20, 0.34);
+  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+}
+.admin-card:hover,.admin-panel:hover {
+  transform: translateY(-4px);
+  box-shadow:0 28px 70px rgba(0,0,0,0.28);
+  border-color: rgba(212,175,55,0.24);
+}
+.admin-card strong { display:block; font-size:1.8rem; margin-top:0.35rem; }
+.admin-panels { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+.admin-panel {
+  padding:1.2rem;
+  background:rgba(12,16,14,0.38);
+  border:1px solid rgba(255,255,255,0.08);
+}
+.admin-roadmap { padding-left:1.15rem; margin:0.85rem 0 0; }
+.auth-page {
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:2rem;
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+.auth-page--signin::before {
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.58)),
+    radial-gradient(circle at center, rgba(255,255,255,0.05), transparent 52%),
+    url('/admin1.jpg') center center / cover no-repeat;
+  transform:scale(1.04);
+  animation: adminBgZoom 22s ease-in-out infinite alternate;
+  filter: brightness(0.85) contrast(1.15) saturate(1.1);
+  z-index:-2;
+}
+.auth-page--signin::after {
+  background:
+    radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.68) 100%),
+    linear-gradient(135deg, rgba(31,95,59,0.06), rgba(31,95,59,0.12));
+  z-index:-1;
+}
+.auth-card {
+  width:min(100%,520px);
+  padding:2rem;
+  border-radius:24px;
+  border:1px solid rgba(212,175,55,0.18);
+  background:rgba(10, 16, 12, 0.46);
+  backdrop-filter:blur(20px);
+  box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  animation: fadeUp 700ms ease both;
+}
+.auth-card__logo {
+  width:4.4rem;
+  height:4.4rem;
+  object-fit:cover;
+  border-radius:1.1rem;
+  margin-bottom:1rem;
+  border:1px solid rgba(212,175,55,0.35);
+  box-shadow:0 14px 32px rgba(0,0,0,0.28);
+}
+.auth-form { display:grid; gap:1rem; margin-top:1.5rem; }
+.auth-form label { display:grid; gap:0.45rem; color:rgba(239,246,235,0.82); }
+.auth-form input {
+  width:100%;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:1rem;
+  background:rgba(255,255,255,0.06);
+  color:inherit;
+  padding:0.95rem 1rem;
+}
+
+@keyframes adminBgZoom {
+  from { transform: scale(1.04) translate3d(0, 0, 0); }
+  to { transform: scale(1.08) translate3d(0, -1.5%, 0); }
+}
+
+@keyframes adminBgFloat {
+  from { transform: scale(1.03) translate3d(0, 0, 0); }
+  to { transform: scale(1.07) translate3d(0, -1%, 0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 960px) {
+  .admin-shell,.admin-shell.is-collapsed { grid-template-columns:1fr; }
+  .admin-sidebar { border-right:0; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .admin-grid,.admin-panels { grid-template-columns:1fr; }
+  .admin-hero,.admin-header { flex-direction:column; align-items:flex-start; }
+}
+
+/* Vrindhavanam Estate Brand Styles */
+.brand-lockup {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.05;
+  text-align: left;
+}
+
+.brand-title {
+  font-family: 'Jost', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #F1E5AC; /* storefront --gold-light */
+  letter-spacing: 0.04em;
+  text-transform: none; /* Make sure it's not forced uppercase */
+}
+
+.brand-subtitle {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.86rem; /* 0.62 of 1.4rem */
+  font-weight: 400;
+  color: #D4AF37; /* storefront --gold */
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 0.16rem;
+}
+
+/* Sidebar branding logo override to match storefront */
+.admin-sidebar__logo {
+  border-radius: 50% !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Login Page branding */
+.auth-brand-lockup {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.auth-brand-lockup .brand-logo-img {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  object-fit: cover;
+}

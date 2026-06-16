@@ -464,7 +464,7 @@ function ensureProductCartDrawer() {
                     <span class="cart-total-label">Total</span>
                     <span class="cart-total-val" id="cartTotal">\u20b90</span>
                 </div>
-                <button class="checkout-btn" onclick="showToast('Redirecting to checkout...')">Proceed to Checkout</button>
+                <button class="checkout-btn" onclick="window.location.href='checkout.html'">Proceed to Checkout</button>
             </div>
         </div>
         <div class="toast" id="toast"></div>
@@ -1163,6 +1163,8 @@ if (select && select.options.length > 0 && price) {
 }
 console.log("DB PRODUCTS USED:", dbProducts);
 
+    const addButton = document.querySelector('.product-detail-add-btn');
+
     if (buyButton && select) {
         const newBuyButton = buyButton.cloneNode(true);
         buyButton.parentNode.replaceChild(newBuyButton, buyButton);
@@ -1171,13 +1173,27 @@ console.log("DB PRODUCTS USED:", dbProducts);
             const weight = selectedText.split('—')[0].trim();
             const finalPrice = select.value;
             window.addToCart(`${product.name} (${weight})`, '₹' + finalPrice);
-            openCart();
-        })
+        });
+        
+        if (addButton) {
+            const newAddButton = addButton.cloneNode(true);
+            addButton.parentNode.replaceChild(newAddButton, addButton);
+            newAddButton.addEventListener('click', () => {
+                const selectedText = select.options[select.selectedIndex].text;
+                const weight = selectedText.split('—')[0].trim();
+                const finalPrice = select.value;
+                window.addToCart(`${product.name} (${weight})`, '₹' + finalPrice);
+            });
+        }
     } else if (buyButton) {
         buyButton.addEventListener('click', () => {
             window.addToCart(product.name, '₹' + product.price);
-            openCart();
         });
+        if (addButton) {
+            addButton.addEventListener('click', () => {
+                window.addToCart(product.name, '₹' + product.price);
+            });
+        }
     }
 
     detailRoot.hidden = false;
@@ -1189,6 +1205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ensureProductVarietyDetailButtons();
 
     const productBuyButtons = document.querySelectorAll('.product-buy-btn');
+    const productAddButtons = document.querySelectorAll('.product-add-btn');
 
     // Ensure cart drawer exists first, then always load saved cart state
     // from localStorage so cart persists across refreshes and restarts.
@@ -1202,7 +1219,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     productBuyButtons.forEach(button => {
         button.addEventListener('click', event => {
-            if (!button.closest('.product-variety-card')) {
+            if (!button.closest('.product-variety-card') && !button.closest('.product-detail-copy')) {
+                return;
+            }
+            event.preventDefault();
+            addVarietyTileToCart(button);
+        });
+    });
+
+    productAddButtons.forEach(button => {
+        button.addEventListener('click', event => {
+            if (!button.closest('.product-variety-card') && !button.closest('.product-detail-copy')) {
                 return;
             }
             event.preventDefault();

@@ -1,0 +1,13 @@
+{
+"name": "vrindhavanam-backend",
+"version": "1.0.0",
+"main": "admin-server.js",
+"scripts": {
+"start": "node admin-server.js"
+},
+"dependencies": {
+"cors": "^2.8.5",
+"express": "^4.21.2",
+"xlsx": "^0.18.5"
+}
+}
