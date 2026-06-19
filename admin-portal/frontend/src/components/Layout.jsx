@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 
 export default function Layout() {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isDashboard = location.pathname === '/' || location.pathname === '';
 
   useEffect(() => {
     const session = window.localStorage.getItem('vrindhavanam_admin_session');
@@ -36,10 +39,11 @@ export default function Layout() {
             </button>
           </div>
         </header>
-        <main className="admin-content">
+        <main className={`admin-content${isDashboard ? '' : ' admin-content--cinematic'}`}>
           <Outlet />
         </main>
       </div>
     </div>
   );
 }
+

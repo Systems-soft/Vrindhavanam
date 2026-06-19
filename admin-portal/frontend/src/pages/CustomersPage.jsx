@@ -6,7 +6,7 @@ export default function CustomersPage() {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 const [showModal, setShowModal] = useState(false);
 const [customerOrders, setCustomerOrders] = useState([]);
-
+const [searchTerm, setSearchTerm] = useState("");
 const closeModal = () => {
   setShowModal(false);
   setSelectedCustomer(null);
@@ -41,27 +41,96 @@ const handleViewCustomer = async (customerId) => {
 
   }, []);
 
+const filteredCustomers = customers.filter((customer) => {
+
+  const search = searchTerm.toLowerCase();
+
   return (
 
-   <div
+    `${customer.first_name} ${customer.last_name}`
+      .toLowerCase()
+      .includes(search)
+
+    ||
+
+    customer.email
+      ?.toLowerCase()
+      .includes(search)
+
+    ||
+
+    customer.phone
+      ?.includes(search)
+
+  );
+
+});
+
+const totalCustomers = customers.length;
+
+const activeCustomers =
+  customers.filter(
+    c => c.orders_count > 0
+  ).length;
+  return (
+
+  <div
   style={{
     width: "100%",
-   overflowX: "auto",
+    overflowX: "auto",
+    maxHeight: "600px",
+    overflowY: "auto"
   }}
 >
 
       <h2>Customers</h2>
+
+<input
+  type="text"
+  placeholder="Search Name / Email / Phone"
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  style={{
+    padding: "8px",
+    width: "350px",
+    marginBottom: "15px"
+  }}
+/>
+<div
+  style={{
+    display: "flex",
+    gap: "20px",
+    marginBottom: "20px"
+  }}
+>
+
+  <div>
+    Total Customers: {totalCustomers}
+  </div>
+
+  <div>
+    Active Customers: {activeCustomers}
+  </div>
+
+</div>
 <table
   border="1"
   cellPadding="10"
   style={{
     width: "100%",
-    minWidth: "1400px",
+    minWidth: "900px",
     borderCollapse: "collapse",
     tableLayout: "fixed"
   }}
 >
-<thead>
+<thead
+  style={{
+    position: "sticky",
+    top: 0,
+    background: "#0f1c12",
+    zIndex: 1
+  }}
+>
   <tr>
     <th style={{ width: "50px" }}>ID</th>
     <th style={{ width: "150px" }}>Name</th>
@@ -75,9 +144,22 @@ const handleViewCustomer = async (customerId) => {
 
         <tbody>
 
-          {customers.map(customer => (
+          {filteredCustomers.map((customer) => (
 
-            <tr key={customer.id}>
+            <tr
+  key={customer.id}
+  style={{
+    cursor: "pointer"
+  }}
+  onMouseEnter={(e) =>
+    e.currentTarget.style.background =
+      "rgba(255,255,255,0.05)"
+  }
+  onMouseLeave={(e) =>
+    e.currentTarget.style.background =
+      "transparent"
+  }
+>
 
               <td>{customer.id}</td>
 
@@ -165,6 +247,39 @@ const handleViewCustomer = async (customerId) => {
         {" "}
         {selectedCustomer?.address}
       </p>
+
+      <p>
+  <strong>Total Orders:</strong>
+  {" "}
+  {customerOrders.length}
+</p>
+
+<p>
+  <strong>Total Spent:</strong>
+
+  {" "}
+  ₹
+
+  {customerOrders
+    .reduce(
+      (sum, order) =>
+        sum + Number(order.total_amount),
+      0
+    )
+    .toFixed(2)}
+</p>
+
+<p>
+  <strong>Latest Order:</strong>
+
+  {" "}
+
+  {customerOrders.length > 0
+    ? new Date(
+        customerOrders[0].placed_at
+      ).toLocaleString()
+    : "No Orders"}
+</p>
 
       <hr />
 <h3>Orders</h3>

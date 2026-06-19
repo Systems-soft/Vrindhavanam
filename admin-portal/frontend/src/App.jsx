@@ -8,6 +8,9 @@ import VariantsPage from './pages/VariantsPage';
 import CheckoutPage from "./pages/CheckoutPage";
 import OrdersPage from "./pages/OrdersPage";
 import CustomersPage from "./pages/CustomersPage";
+import InventoryPage from "./pages/InventoryPage";
+import HarvestPage from "./pages/HarvestPage";
+import BatchesPage from "./pages/BatchesPage";
 
 const modulePages = {
   orders: 'Orders',
@@ -35,7 +38,6 @@ const modulePages = {
   media: 'Media Library',
   notifications: 'Notifications',
   ai: 'AI Insights',
-  harvest: 'Harvest',
   batches: 'Batches',
   grades: 'Quality Grades',
   blog: 'Blog System',
@@ -77,12 +79,28 @@ element={<VariantsPage />}
   path="/admin/customers"
   element={<CustomersPage />}
 />
+<Route
+  path="/admin/inventory"
+  element={<InventoryPage />}
+/>
+<Route
+  path="/admin/harvests"
+  element={<HarvestPage />}
+/>
+<Route
+  path="/admin/batches"
+  element={<BatchesPage />}
+/>
 {Object.entries(modulePages)
 .filter(
   ([slug]) =>
-    slug !== 'products' &&
-    slug !== 'variants' &&
-    slug !== 'orders'
+    slug !== "products" &&
+    slug !== "variants" &&
+    slug !== "orders" &&
+    slug !== "harvests" &&
+    slug !== "inventory" &&
+    slug !== "customers" &&
+    slug !== "batches"
 )
 .map(([slug, title]) => (
 <Route

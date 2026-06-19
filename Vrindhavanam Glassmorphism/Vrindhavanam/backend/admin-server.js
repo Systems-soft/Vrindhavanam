@@ -474,6 +474,433 @@ app.get("/api/admin/products", async (req, res) => {
   }
 
 });
+
+app.get("/api/admin/inventory", async (req, res) => {
+
+  try {
+
+    const [inventory] = await pool.query(`
+      SELECT
+        id,
+        product_name,
+        variety_name,
+        grade,
+        stock_quantity,
+        stock_status,
+        price
+      FROM products
+      ORDER BY id DESC
+    `);
+
+    res.json(inventory);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+app.put("/api/admin/products/:id", async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const {
+      product_name,
+      price,
+      stock_quantity,
+      stock_status
+    } = req.body;
+
+    await pool.query(
+      `
+      UPDATE products
+      SET
+        product_name = ?,
+        price = ?,
+        stock_quantity = ?,
+        stock_status = ?
+      WHERE id = ?
+      `,
+      [
+        product_name,
+        price,
+        stock_quantity,
+        stock_status,
+        productId
+      ]
+    );
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+});
+app.post("/api/admin/products", async (req, res) => {
+
+  try {
+
+    const {
+  product_name,
+  variety_name,
+  weight,
+  price,
+  stock_quantity,
+  stock_status
+} = req.body;
+    const [result] = await pool.query(
+      `
+      INSERT INTO products
+(
+ product_name,
+ variety_name,
+ weight,
+ price,
+ stock_quantity,
+ stock_status
+)
+      VALUES (?, ?, ?, ?, ?)
+      `,
+      [
+  product_name,
+  variety_name,
+  weight,
+  price,
+  stock_quantity,
+  stock_status
+]
+    );
+
+    res.json({
+      success: true,
+      id: result.insertId
+    });
+
+  } catch(err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+app.get("/api/admin/harvests", async (req, res) => {
+
+  try {
+
+    const [harvests] = await pool.query(`
+      SELECT *
+      FROM harvests
+      ORDER BY harvest_date DESC
+    `);
+
+    res.json(harvests);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+app.post("/api/admin/harvests", async (req, res) => {
+
+  try {
+
+    const {
+      crop_type,
+      harvest_date,
+      yield_kg,
+      quality_grade,
+      status
+    } = req.body;
+
+    const [result] = await pool.query(
+      `
+      INSERT INTO harvests
+      (
+        crop_type,
+        harvest_date,
+        yield_kg,
+        quality_grade,
+        status
+      )
+      VALUES (?, ?, ?, ?, ?)
+      `,
+      [
+        crop_type,
+        harvest_date,
+        yield_kg,
+        quality_grade,
+        status
+      ]
+    );
+
+    res.json({
+      success: true,
+      id: result.insertId
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+app.put("/api/admin/harvests/:id", async (req, res) => {
+
+  try {
+
+    const harvestId = req.params.id;
+
+    const {
+      crop_type,
+      harvest_date,
+      yield_kg,
+      quality_grade,
+      status
+    } = req.body;
+
+    await pool.query(
+      `
+      UPDATE harvests
+      SET
+        crop_type=?,
+        harvest_date=?,
+        yield_kg=?,
+        quality_grade=?,
+        status=?
+      WHERE id=?
+      `,
+      [
+        crop_type,
+        harvest_date,
+        yield_kg,
+        quality_grade,
+        status,
+        harvestId
+      ]
+    );
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+app.delete("/api/admin/harvests/:id", async (req, res) => {
+
+  try {
+
+    const harvestId = req.params.id;
+
+    await pool.query(
+      `
+      DELETE FROM harvests
+      WHERE id=?
+      `,
+      [harvestId]
+    );
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+app.get("/api/admin/batches", async (req, res) => {
+  try {
+
+    const [batches] = await pool.query(`
+      SELECT
+        b.id,
+        b.batch_number,
+        b.processing_status,
+        b.packaging_date,
+        b.quantity_kg,
+        b.created_at,
+        h.crop_type,
+        h.yield_kg
+      FROM batches b
+      JOIN harvests h
+      ON b.harvest_id = h.id
+      ORDER BY b.id DESC
+    `);
+
+    res.json(batches);
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+});
+
+app.post("/api/admin/batches", async (req, res) => {
+
+  try {
+
+    const {
+      harvest_id,
+      batch_number,
+      processing_status,
+      packaging_date,
+      quantity_kg
+    } = req.body;
+
+    const [result] = await pool.query(
+      `
+      INSERT INTO batches
+      (
+        harvest_id,
+        batch_number,
+        processing_status,
+        packaging_date,
+        quantity_kg
+      )
+      VALUES (?, ?, ?, ?, ?)
+      `,
+      [
+        harvest_id,
+        batch_number,
+        processing_status,
+        packaging_date,
+        quantity_kg
+      ]
+    );
+
+    res.json({
+      success: true,
+      id: result.insertId
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+app.put("/api/admin/batches/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const {
+    batch_number,
+    harvest_id,
+    quantity_kg,
+    packaging_date,
+    processing_status
+  } = req.body;
+
+  try {
+    await pool.query(
+      `
+      UPDATE batches
+      SET
+        batch_number = ?,
+        harvest_id = ?,
+        quantity_kg = ?,
+        packaging_date = ?,
+        processing_status = ?
+      WHERE id = ?
+      `,
+      [
+        batch_number,
+        harvest_id,
+        quantity_kg,
+        packaging_date,
+        processing_status,
+        id
+      ]
+    );
+
+    res.json({
+      message: "Batch updated successfully"
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Failed to update batch"
+    });
+  }
+});
+
+app.delete("/api/admin/batches/:id", async (req, res) => {
+  try {
+    await pool.query(
+      "DELETE FROM batches WHERE id = ?",
+      [req.params.id]
+    );
+
+    res.json({
+      message: "Batch deleted successfully"
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Failed to delete batch"
+    });
+  }
+});
 app.listen(5005, () => {
 console.log("Products API running on port 5005");
 });

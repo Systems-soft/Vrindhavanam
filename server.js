@@ -2,7 +2,7 @@ console.log("RUNNING FILE:", __filename);
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const mysql = require('mysql2/promise');
+const mysql = require('mysql2');
 const xlsx = require('xlsx');
 console.log("RUNNING FILE:", __filename);
 const host = '0.0.0.0';
@@ -17,6 +17,10 @@ const db = mysql.createPool({
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
+});
+
+db.on('error', (err) => {
+    console.error('MySQL Pool Error:', err);
 });
 
 console.log("MySQL Pool Created ✅");
@@ -58,7 +62,7 @@ function importExcelToDatabase(){
     try {
         const excelFiles = ['tea.xlsx', 'cardamom.xlsx', 'honey.xlsx','coffee.xlsx','pepper.xlsx','cloves.xlsx','ghee.xlsx','turmeric.xlsx','ginger.xlsx','cashew.xlsx'];
         excelFiles.forEach(file => {
-            const filePath = path.join(__dirname, file);
+            const filePath = path.join(root, file);
             if (!fs.existsSync(filePath)) {
                 return;
             }
@@ -203,8 +207,8 @@ if (req.url === "/whoami") {
 
             const { email, password } = JSON.parse(body);
 
-            const Admin = require("./backend/models/Admin");
-            const AuthService = require("./backend/services/authService");
+            const Admin = require("./Vrindhavanam Glassmorphism/Vrindhavanam/backend/models/Admin");
+            const AuthService = require("./Vrindhavanam Glassmorphism/Vrindhavanam/backend/services/authService");
 
             const admin = await Admin.findAdminByEmail(email);
 

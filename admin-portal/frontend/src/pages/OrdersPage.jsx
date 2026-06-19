@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
+const [orders, setOrders] = useState([]);
+const [selectedItems, setSelectedItems] = useState([]);
 const [showModal, setShowModal] = useState(false);
 const [loadingItems, setLoadingItems] = useState(false);
 const [selectedOrder, setSelectedOrder] = useState(null);
+const [searchTerm, setSearchTerm] = useState("");
+const [statusFilter, setStatusFilter] = useState("All");
 
 const closeModal = () => {
   setShowModal(false);
@@ -87,10 +89,100 @@ const handleViewOrder = async (orderId) => {
       .catch(err => console.error(err));
   }, []);
 
+  const filteredOrders = orders.filter((order) => {
+
+  const search = searchTerm.toLowerCase();
+
+  const matchesSearch =
+    String(order.id).includes(search) ||
+
+    `${order.first_name} ${order.last_name}`
+      .toLowerCase()
+      .includes(search) ||
+
+    (order.phone || "")
+      .toLowerCase()
+      .includes(search) ||
+
+    (order.email || "")
+      .toLowerCase()
+      .includes(search);
+
+  const matchesStatus =
+    statusFilter === "All" ||
+    order.status === statusFilter;
+
+  return matchesSearch && matchesStatus;
+
+});
+
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Orders</h2>
+      <h2>Orders Management</h2>
 
+      <input
+  type="text"
+  placeholder="Search Order ID / Name / Phone / Email"
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  style={{
+    padding: "8px",
+    width: "350px",
+    marginBottom: "15px"
+  }}
+/>
+<select
+  value={statusFilter}
+  onChange={(e) => setStatusFilter(e.target.value)}
+  style={{
+    padding: "8px",
+    marginLeft: "10px",
+    marginBottom: "15px"
+  }}
+>
+  <option value="All">All</option>
+  <option value="Pending">Pending</option>
+<option value="Confirmed">Confirmed</option>
+<option value="Packed">Packed</option>
+<option value="Shipped">Shipped</option>
+<option value="Delivered">Delivered</option>
+<option value="Cancelled">Cancelled</option>
+<option value="Refunded">Refunded</option>
+</select>
+
+<div
+  style={{
+    display: "flex",
+    gap: "20px",
+    marginBottom: "20px"
+  }}
+>
+  <div>Total Orders: {orders.length}</div>
+
+  <div>
+    Pending: {
+      orders.filter(o => o.status === "Pending").length
+    }
+  </div>
+
+  <div>
+    Shipped: {
+      orders.filter(o => o.status === "Shipped").length
+    }
+  </div>
+
+  <div>
+    Delivered: {
+      orders.filter(o => o.status === "Delivered").length
+    }
+  </div>
+
+  <div>
+    Cancelled: {
+      orders.filter(o => o.status === "Cancelled").length
+    }
+  </div>
+</div>
       <table
         border="1"
         cellPadding="10"
@@ -113,7 +205,7 @@ const handleViewOrder = async (orderId) => {
         </thead>
 
         <tbody>
-          {orders.map(order => (
+          {filteredOrders.map((order) => (
   <tr
     key={order.id}
     style={{

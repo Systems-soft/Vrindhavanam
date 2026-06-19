@@ -7,7 +7,7 @@ const navItems = [
   { name: 'Products', path: '/admin/products' },
   { name: 'Variants', path: '/admin/variants' },
   { name: 'Inventory', path: '/admin/inventory' },
-  { name: 'Harvest', path: '/admin/harvest' },
+  { name: 'Harvest', path: '/admin/harvests' },
   { name: 'Batches', path: '/admin/batches' },
   { name: 'Quality Grades', path: '/admin/grades' },
   { name: 'Subscriptions', path: '/admin/subscriptions' },
