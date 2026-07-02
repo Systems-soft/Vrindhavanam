@@ -5,10 +5,10 @@ module.exports = {
   // Sales report: total revenue per day for the last 30 days
   async getSalesReport() {
     const [rows] = await pool.query(
-      `SELECT DATE(created_at) as date, SUM(total_amount) as revenue
+      `SELECT DATE(placed_at) as date, SUM(total_amount) as revenue
        FROM orders
        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-       GROUP BY DATE(created_at)
+       GROUP BY DATE(placed_at)
        ORDER BY date DESC`
     );
     return rows;

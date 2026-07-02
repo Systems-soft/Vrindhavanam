@@ -1,8 +1,32 @@
 import { useEffect, useState } from "react";
 
+const defaultProducts = [
+  "Cardamom", "Pepper", "Coffee", "Cloves", "Tea", "Turmeric",
+  "Ginger", "Honey", "Ghee", "Cashew", "Ashwagandha", "Manure",
+  "Garcinia Cambogia", "Pickle"
+].sort();
+
+const selectStyle = {
+  width: "100%",
+  padding: "9px 12px",
+  background: "#0f1d13",
+  border: "1px solid rgba(255,255,255,0.14)",
+  borderRadius: "8px",
+  color: "#eff6eb",
+  fontSize: "0.9rem",
+  cursor: "pointer",
+  outline: "none"
+};
+
+const optionStyle = {
+  background: "#0f1d13",
+  color: "#eff6eb"
+};
+
 export default function HarvestPage() {
 
   const [harvests, setHarvests] = useState([]);
+  const [productList, setProductList] = useState(defaultProducts);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [showModal, setShowModal] = useState(false);
@@ -23,6 +47,19 @@ const [editHarvest, setEditHarvest] = useState(null);
   status: "Harvested"
 
 });
+
+  useEffect(() => {
+    fetch("http://localhost:5005/api/admin/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const uniques = [...new Set(data.map(p => p.product_name))].filter(Boolean);
+          const combined = [...new Set([...uniques, ...defaultProducts])].sort();
+          setProductList(combined);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
 
@@ -287,13 +324,20 @@ if (!response.ok) {
   onChange={(e) => setStatusFilter(e.target.value)}
   style={{
     marginLeft: "10px",
-    padding: "8px"
+    padding: "8px 12px",
+    background: "#0f1d13",
+    color: "#eff6eb",
+    border: "1px solid rgba(255,255,255,0.15)",
+    borderRadius: "8px",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+    outline: "none"
   }}
 >
-  <option value="All">All</option>
-  <option value="Harvested">Harvested</option>
-  <option value="Processing">Processing</option>
-  <option value="Completed">Completed</option>
+  <option value="All" style={{ background: "#0f1d13", color: "#eff6eb" }}>All</option>
+  <option value="Harvested" style={{ background: "#0f1d13", color: "#eff6eb" }}>Harvested</option>
+  <option value="Processing" style={{ background: "#0f1d13", color: "#eff6eb" }}>Processing</option>
+  <option value="Completed" style={{ background: "#0f1d13", color: "#eff6eb" }}>Completed</option>
 </select>
      
       <div
@@ -512,23 +556,19 @@ if (!response.ok) {
 
       <h2>Add Harvest</h2>
 
-     <select
-  name="crop_type"
-  value={newHarvest.crop_type}
-  onChange={handleInputChange}
->
-  <option value="">Select Crop</option>
-  <option value="Cardamom">Cardamom</option>
-  <option value="Pepper">Pepper</option>
-  <option value="Coffee">Coffee</option>
-  <option value="Cloves">Cloves</option>
-  <option value="Tea">Tea</option>
-  <option value="Turmeric">Turmeric</option>
-  <option value="Ginger">Ginger</option>
-  <option value="Honey">Honey</option>
-  <option value="Ghee">Ghee</option>
-  <option value="Cashew">Cashew</option>
-</select>
+   <select
+   name="crop_type"
+   value={newHarvest.crop_type}
+   onChange={handleInputChange}
+   style={selectStyle}
+ >
+   <option value="" style={optionStyle}>Select Crop</option>
+   {productList.map((name) => (
+     <option key={name} value={name} style={optionStyle}>
+       {name}
+     </option>
+   ))}
+ </select>
 
       <br /><br />
 
@@ -555,10 +595,11 @@ if (!response.ok) {
         name="quality_grade"
         value={newHarvest.quality_grade}
         onChange={handleInputChange}
+        style={selectStyle}
       >
-        <option>Premium</option>
-        <option>Standard</option>
-        <option>Economy</option>
+        <option style={optionStyle}>Premium</option>
+        <option style={optionStyle}>Standard</option>
+        <option style={optionStyle}>Economy</option>
       </select>
 
       <br /><br />
@@ -567,10 +608,11 @@ if (!response.ok) {
         name="status"
         value={newHarvest.status}
         onChange={handleInputChange}
+        style={selectStyle}
       >
-        <option>Harvested</option>
-        <option>Processing</option>
-        <option>Completed</option>
+        <option style={optionStyle}>Harvested</option>
+        <option style={optionStyle}>Processing</option>
+        <option style={optionStyle}>Completed</option>
       </select>
 
       <br /><br />
@@ -621,18 +663,14 @@ if (!response.ok) {
   name="crop_type"
   value={editHarvest?.crop_type || ""}
   onChange={handleEditInputChange}
+  style={selectStyle}
 >
-  <option value="">Select Crop</option>
-  <option value="Cardamom">Cardamom</option>
-  <option value="Pepper">Pepper</option>
-  <option value="Coffee">Coffee</option>
-  <option value="Cloves">Cloves</option>
-  <option value="Tea">Tea</option>
-  <option value="Turmeric">Turmeric</option>
-  <option value="Ginger">Ginger</option>
-  <option value="Honey">Honey</option>
-<option value="Ghee">Ghee</option>
-<option value="Cashew">Cashew</option>
+  <option value="" style={optionStyle}>Select Crop</option>
+  {productList.map((name) => (
+    <option key={name} value={name} style={optionStyle}>
+      {name}
+    </option>
+  ))}
 </select>
 
 <br /><br />
@@ -662,10 +700,11 @@ if (!response.ok) {
   name="quality_grade"
   value={editHarvest?.quality_grade || "Premium"}
   onChange={handleEditInputChange}
+  style={selectStyle}
 >
-  <option>Premium</option>
-  <option>Standard</option>
-  <option>Economy</option>
+  <option style={optionStyle}>Premium</option>
+  <option style={optionStyle}>Standard</option>
+  <option style={optionStyle}>Economy</option>
 </select>
 
 <br /><br />
@@ -674,10 +713,11 @@ if (!response.ok) {
   name="status"
   value={editHarvest?.status || "Harvested"}
   onChange={handleEditInputChange}
+  style={selectStyle}
 >
-  <option>Harvested</option>
-  <option>Processing</option>
-  <option>Completed</option>
+  <option style={optionStyle}>Harvested</option>
+  <option style={optionStyle}>Processing</option>
+  <option style={optionStyle}>Completed</option>
 </select>
 
 <br /><br />

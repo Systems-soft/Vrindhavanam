@@ -1,10 +1,65 @@
 import { useEffect, useState } from "react";
 
+const defaultProducts = [
+  { name: "Cardamom", key: "cardamom" },
+  { name: "Pepper", key: "pepper" },
+  { name: "Cloves", key: "cloves" },
+  { name: "Turmeric", key: "turmeric" },
+  { name: "Ginger", key: "ginger" },
+  { name: "Garcinia Cambogia", key: "garcinia" },
+  { name: "Ashwagandha", key: "ashwagandha" },
+  { name: "Pickle", key: "pickle" },
+  { name: "Honey", key: "honey" },
+  { name: "Tea", key: "tea" },
+  { name: "Coffee", key: "coffee" },
+  { name: "Ghee", key: "ghee" },
+  { name: "Cashew", key: "cashew" }
+].sort((a, b) => a.name.localeCompare(b.name));
+
+function getVarietyKey(name) {
+  const lower = name.toLowerCase();
+  if (lower.includes('cardamom')) return 'cardamom';
+  if (lower.includes('pepper')) return 'pepper';
+  if (lower.includes('turmeric')) return 'turmeric';
+  if (lower.includes('clove')) return 'cloves';
+  if (lower.includes('tea') || lower.includes('chai')) return 'tea';
+  if (lower.includes('coffee') || lower.includes('roast') || lower.includes('bean')) return 'coffee';
+  if (lower.includes('honey') || lower.includes('blossom')) return 'honey';
+  if (lower.includes('ghee')) return 'ghee';
+  if (lower.includes('ginger')) return 'ginger';
+  if (lower.includes('cashew')) return 'cashew';
+  if (lower.includes('ashwagandha')) return 'ashwagandha';
+  if (lower.includes('garcinia')) return 'garcinia';
+  if (lower.includes('pickle')) return 'pickle';
+  return lower.replace(/[^a-z0-9]+/g, '-');
+}
+
 export default function VariantsPage() {
-  const [product, setProduct] = useState("honey");
+  const [product, setProduct] = useState("cardamom");
+  const [productList, setProductList] = useState(defaultProducts);
   const [variants, setVariants] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+
+  useEffect(() => {
+    fetch("http://localhost:5005/api/admin/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const uniques = [...new Set(data.map(p => p.product_name))].filter(Boolean);
+          const mapped = uniques.map(name => ({
+            name: name,
+            key: getVarietyKey(name)
+          })).sort((a, b) => a.name.localeCompare(b.name));
+          setProductList(mapped);
+          
+          if (mapped.length > 0 && !mapped.some(m => m.key === product)) {
+            setProduct(mapped[0].key);
+          }
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     fetch(`http://localhost:5005/api/variants/${product}`)
@@ -47,18 +102,29 @@ const outOfStock = variants.filter(
       <h2>Variants Management</h2>
 
      <select
-  value={product}
-  onChange={(e) => setProduct(e.target.value)}
->
-  <option value="cardamom">Cardamom</option>
-  <option value="pepper">Pepper</option>
-  <option value="honey">Honey</option>
-  <option value="coffee">Coffee</option>
-  <option value="cloves">Cloves</option>
-  <option value="ghee">Ghee</option>
-  <option value="tea">Tea</option>
-  <option value="turmeric">Turmeric</option>
-</select>
+        value={product}
+        onChange={(e) => setProduct(e.target.value)}
+        style={{
+          padding: "8px 12px",
+          borderRadius: "8px",
+          background: "#0f1d13",
+          color: "#eff6eb",
+          border: "1px solid rgba(255,255,255,0.15)",
+          fontSize: "0.9rem",
+          cursor: "pointer",
+          outline: "none"
+        }}
+      >
+        {productList.map((item) => (
+          <option
+            key={item.key}
+            value={item.key}
+            style={{ background: "#0f1d13", color: "#eff6eb" }}
+          >
+            {item.name}
+          </option>
+        ))}
+      </select>
 
 <input
   type="text"
@@ -75,13 +141,20 @@ const outOfStock = variants.filter(
   onChange={(e) => setStatusFilter(e.target.value)}
   style={{
     marginLeft: "10px",
-    padding: "8px"
+    padding: "8px 12px",
+    background: "#0f1d13",
+    color: "#eff6eb",
+    border: "1px solid rgba(255,255,255,0.15)",
+    borderRadius: "8px",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+    outline: "none"
   }}
 >
-  <option value="All">All</option>
-  <option value="In Stock">In Stock</option>
-  <option value="Low Stock">Low Stock</option>
-  <option value="Out Of Stock">Out Of Stock</option>
+  <option value="All" style={{ background: "#0f1d13", color: "#eff6eb" }}>All</option>
+  <option value="In Stock" style={{ background: "#0f1d13", color: "#eff6eb" }}>In Stock</option>
+  <option value="Low Stock" style={{ background: "#0f1d13", color: "#eff6eb" }}>Low Stock</option>
+  <option value="Out Of Stock" style={{ background: "#0f1d13", color: "#eff6eb" }}>Out Of Stock</option>
 </select>
 <div
   style={{

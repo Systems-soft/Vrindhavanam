@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pickle Varieties | Vrindhavanam Estate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Jost:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css?v=3" />
+    <link rel="stylesheet" href="css/components.css?v=6" />
+    <link rel="stylesheet" href="css/product-pages.css?v=9" />
+    <link rel="icon" href="images/logo.png" />
+  </head>
+  <body class="product-page pickle-page">
+    <nav id="navbar">
+      <div class="nav-logo">
+        <img
+          class="brand-logo-img"
+          src="images/logo.png"
+          alt="Vrindhavanam Estate logo"
+        />
+        <span class="brand-lockup">
+          <span class="brand-title">Vrindhavanam Estate</span>
+          <span class="brand-subtitle">Heritage Since 1932</span>
+        </span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html#hero">Home</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#products">Products</a></li>
+        <li><a href="index.html#why">Why Us</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav-right">
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <button class="cart-btn" onclick="openCart()">
+          Cart
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </nav>
+
+    <main>
+      <div class="product-page-shell">
+        <a class="product-back" href="index.html#products">Back to collection</a>
+
+        <div class="section-eyebrow">Heritage Collection</div>
+        <h1 class="section-title">Pickle <em>Varieties</em></h1>
+        <p class="product-page-intro">
+          Traditional home-style estate pickle made with local organic ingredients.
+        </p>
+        <section class="product-variety-grid" aria-label="Pickle varieties">
+          <article
+            class="product-variety-card"
+            id="pickle"
+            data-product-id="K001"
+            style="
+              --product-image: url(&quot;images/picklevariety.jpg&quot;);
+              background-image: url(&quot;images/picklevariety.jpg&quot;);
+            "
+          >
+            <img
+              class="product-variety-image"
+              src="images/picklevariety.jpg"
+              alt="Pickle"
+            />
+            <span class="product-variety-label">Heritage Recipe</span>
+
+            <h2 class="product-variety-name">Pickle</h2>
+
+            <span class="product-variety-price">₹200</span>
+
+            <p class="product-variety-copy">
+              Traditional home-style estate pickle made with local organic ingredients.
+            </p>
+
+            <div class="product-price">50gm</div>
+
+            <select
+              class="weight-select"
+            >
+              <option value="200">50gm — ₹200</option>
+              <option value="600">100gm — ₹600</option>
+              <option value="900">250gm — ₹900</option>
+              <option value="1600">500gm — ₹1600</option>
+              <option value="2000">1kg — ₹2000</option>
+            </select>
+
+            <span id="pickle-price-1" style="display: none"></span>
+
+            <div class="product-variety-actions">
+              <button type="button" class="product-add-btn">Add to Cart</button>
+              <a href="index.html#cartDrawer" class="product-buy-btn">Buy Now</a>
+              <a href="product-detail.html?product=pickle" class="product-details-btn">Details</a>
+            </div>
+          </article>
+        </section>
+        <section
+          class="other-products-section"
+          aria-label="Other handpicked products"
+        >
+          <h2 class="other-products-title">Other Handpicked Products</h2>
+          <div class="other-products-grid">
+            <!-- Dynamic selection loaded by navigation.js -->
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+    <div class="cart-drawer" id="cartDrawer">
+      <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button class="close-cart-btn" onclick="closeCart()">&times;</button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-footer" id="cartFooter">
+        <div class="cart-total">Total: <span id="cartTotal">₹0</span></div>
+        <a href="checkout.html" class="checkout-btn">Proceed to Checkout</a>
+      </div>
+    </div>
+
+    <script src="js/main.js?v=4"></script>
+    <script src="js/navigation.js?v=4"></script>
+  </body>
+</html>

@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "node backend/admin-server.js",
+    "dev:backend": "cd \"../Vrindhavanam Glassmorphism/Vrindhavanam/backend\" && node admin-server.js",
     "dev:frontend": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build",
-    "start": "node backend/admin-server.js"
+    "start": "cd \"../Vrindhavanam Glassmorphism/Vrindhavanam/backend\" && node admin-server.js"
   },
   "dependencies": {
     "axios": "^1.7.2",

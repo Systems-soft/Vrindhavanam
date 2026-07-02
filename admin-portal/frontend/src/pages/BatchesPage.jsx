@@ -1,5 +1,22 @@
 import { useEffect, useState } from "react";
 
+const selectStyle = {
+  width: "100%",
+  padding: "9px 12px",
+  background: "#0f1d13",
+  border: "1px solid rgba(255,255,255,0.14)",
+  borderRadius: "8px",
+  color: "#eff6eb",
+  fontSize: "0.9rem",
+  cursor: "pointer",
+  outline: "none"
+};
+
+const optionStyle = {
+  background: "#0f1d13",
+  color: "#eff6eb"
+};
+
 export default function BatchPage() {
 
   const [batches, setBatches] = useState([]);
@@ -280,15 +297,22 @@ if (!response.ok) {
   onChange={(e) => setStatusFilter(e.target.value)}
   style={{
     marginLeft: "10px",
-    padding: "8px"
+    padding: "8px 12px",
+    background: "#0f1d13",
+    color: "#eff6eb",
+    border: "1px solid rgba(255,255,255,0.15)",
+    borderRadius: "8px",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+    outline: "none"
   }}
 >
-  <option value="All">All</option>
-<option value="Pending">Pending</option>
-<option value="Drying">Drying</option>
-<option value="Sorting">Sorting</option>
-<option value="Packaging">Packaging</option>
-<option value="Ready">Ready</option>
+  <option value="All" style={{ background: "#0f1d13", color: "#eff6eb" }}>All</option>
+  <option value="Pending" style={{ background: "#0f1d13", color: "#eff6eb" }}>Pending</option>
+  <option value="Drying" style={{ background: "#0f1d13", color: "#eff6eb" }}>Drying</option>
+  <option value="Sorting" style={{ background: "#0f1d13", color: "#eff6eb" }}>Sorting</option>
+  <option value="Packaging" style={{ background: "#0f1d13", color: "#eff6eb" }}>Packaging</option>
+  <option value="Ready" style={{ background: "#0f1d13", color: "#eff6eb" }}>Ready</option>
 </select>
      
       <div
@@ -546,12 +570,13 @@ if (!response.ok) {
   name="processing_status"
   value={newBatch.processing_status}
   onChange={handleInputChange}
+  style={selectStyle}
 >
-  <option value="Pending">Pending</option>
-  <option value="Drying">Drying</option>
-  <option value="Sorting">Sorting</option>
-  <option value="Packaging">Packaging</option>
-  <option value="Ready">Ready</option>
+  <option value="Pending" style={optionStyle}>Pending</option>
+  <option value="Drying" style={optionStyle}>Drying</option>
+  <option value="Sorting" style={optionStyle}>Sorting</option>
+  <option value="Packaging" style={optionStyle}>Packaging</option>
+  <option value="Ready" style={optionStyle}>Ready</option>
 </select>
 
       <br /><br />
@@ -646,12 +671,13 @@ if (!response.ok) {
   name="processing_status"
   value={editBatch?.processing_status || "Pending"}
   onChange={handleEditInputChange}
+  style={selectStyle}
 >
-  <option>Pending</option>
-  <option>Drying</option>
-  <option>Sorting</option>
-  <option>Packaging</option>
-  <option>Ready</option>
+  <option style={optionStyle}>Pending</option>
+  <option style={optionStyle}>Drying</option>
+  <option style={optionStyle}>Sorting</option>
+  <option style={optionStyle}>Packaging</option>
+  <option style={optionStyle}>Ready</option>
 </select>
 
 <br /><br />

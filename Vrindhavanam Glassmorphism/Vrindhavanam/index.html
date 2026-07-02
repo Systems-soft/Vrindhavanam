@@ -500,8 +500,9 @@
           Three Generations of<br /><em>Pure Cardamom Since 1932</em>
         </h1>
         <p class="hero-sub">
-          Hand-harvested heritage cardamom from the mist-wrapped hills of Idukki,
-          Kerala — grown with care, crafted with soul, traced with heart, and proudly packed in Idukki.
+          Hand-harvested heritage cardamom from the mist-wrapped hills of
+          Idukki, Kerala — grown with care, crafted with soul, traced with
+          heart, and proudly packed in Idukki.
         </p>
         <div class="hero-ctas">
           <a href="#products" class="btn-primary">Explore Spices</a>
@@ -1032,6 +1033,43 @@
             Rich kernels, naturally processed, and hand-selected.
           </span>
         </a>
+        <a
+          id="product-ashwagandha"
+          class="handpicked-tile"
+          href="ashwagandha.html"
+          style="background-image: url(&quot;images/ashwaghandha.jpg&quot;)"
+        >
+          <span class="tile-badge">Premium Herb</span>
+          <span class="tile-name">Ashwagandha</span>
+          <span class="tile-value">
+            Root powder selected for purity, stress relief, and vitality.
+          </span>
+        </a>
+        <a
+          id="product-garcinia"
+          class="handpicked-tile"
+          href="garcinia.html"
+          style="background-image: url(&quot;images/garcinia.jpg&quot;)"
+        >
+          <span class="tile-badge">Naturally Sour</span>
+          <span class="tile-name">Garcinia</span>
+          <span class="tile-value">
+            Premium sun-dried Garcinia Cambogia harvested from our estate plots.
+          </span>
+        </a>
+        <a
+          id="product-pickle"
+          class="handpicked-tile"
+          href="pickle.html"
+          style="background-image: url(&quot;images/pickle.jpg&quot;)"
+        >
+          <span class="tile-badge">Heritage Recipe</span>
+          <span class="tile-name">Pickle</span>
+          <span class="tile-value">
+            Traditional home-style estate pickle made with local organic ingredients.
+          </span>
+        </a>
+
       </div>
       <div class="handpicked-detail" id="handpicked-detail" hidden></div>
     </section>
@@ -1324,15 +1362,8 @@
           </ul>
           <div class="sub-discount">15% <small>off retail price</small></div>
           <br /><br />
-          <button
-            class="btn-primary"
-            onclick="
-              showToast(
-                'Thank you for your interest! Our subscription portal is currently being finalized for secure payments. Please check back shortly.',
-              )
-            "
-          >
-            Subscribe — From ₹${product.price}/mo
+          <button id="subscribeBtn" class="btn-primary">
+            Subscribe — From ₹599/mo
           </button>
         </div>
         <div>
@@ -1369,8 +1400,10 @@
               <input
                 type="radio"
                 name="box"
-                value="essential"
-                style="accent-color: var(--gold)"
+                checked
+                data-product-id="14187"
+                data-variant-id="1"
+                data-price="399"
               />
               <div>
                 <div
@@ -1380,7 +1413,7 @@
                     font-weight: 500;
                   "
                 >
-                  Essential Box — <span class="price"></span>
+                  Essential Box — ₹399/month
                 </div>
                 <div
                   style="
@@ -1413,9 +1446,9 @@
               <input
                 type="radio"
                 name="box"
-                value="heritage"
-                checked
-                style="accent-color: var(--gold)"
+                data-product-id="14188"
+                data-variant-id="1"
+                data-price="599"
               />
               <div>
                 <div
@@ -1425,7 +1458,7 @@
                     font-weight: 500;
                   "
                 >
-                  Heritage Box — <span class="price"></span> ⭐ Popular
+                  Heritage Box — ₹599/month ⭐ Popular
                 </div>
                 <div
                   style="
@@ -1456,8 +1489,9 @@
               <input
                 type="radio"
                 name="box"
-                value="collector"
-                style="accent-color: var(--gold)"
+                data-product-id="14189"
+                data-variant-id="1"
+                data-price="899"
               />
               <div>
                 <div
@@ -1467,7 +1501,7 @@
                     font-weight: 500;
                   "
                 >
-                  Collector's Box — <span class="price"></span>
+                  Collector's Box — ₹899/month
                 </div>
                 <div
                   style="
@@ -1480,6 +1514,43 @@
                 </div>
               </div>
             </label>
+            <div style="margin-top: 25px">
+              <label style="color: var(--cream)"> Delivery Frequency </label>
+
+              <br />
+
+              <div class="sub-select-wrap">
+                <select id="subscriptionFrequency" class="sub-select">
+                  <option value="Monthly">Monthly</option>
+                  <option value="Every 2 Months">Every 2 Months</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top: 20px">
+              <label style="color: var(--cream)"> Quantity </label>
+
+              <br />
+
+              <div class="sub-qty-stepper">
+                <button type="button" class="sub-qty-btn minus">—</button>
+                <input
+                  id="subscriptionQuantity"
+                  type="number"
+                  value="1"
+                  min="1"
+                  readonly
+                />
+                <button type="button" class="sub-qty-btn plus">+</button>
+              </div>
+            </div>
+
+            <div style="margin-top: 25px">
+              <h3 style="color: var(--gold-light)">
+                Total:
+                <span id="subscriptionTotal"> ₹599 </span>
+              </h3>
+            </div>
           </div>
         </div>
       </div>
@@ -1779,7 +1850,7 @@
         </div>
         <button
           class="checkout-btn"
-          onclick="window.location.href='checkout.html'"
+          onclick="window.location.href = 'checkout.html'"
         >
           Proceed to Checkout
         </button>
@@ -1823,17 +1894,15 @@
       </div>
     </div>
 
-    <!-- TOAST -->
-    <div class="toast" id="toast"></div>
-
     <!-- Audio Element -->
     <audio id="ambienceAudio" loop>
       <source src="audio/nature_ambience.mp3" type="audio/mpeg" />
     </audio>
 
     <!-- Scripts -->
-    <script src="js/main.js?v=3"></script>
-    <script src="js/navigation.js"></script>
+    <script src="js/subscription.js"></script>
+    <script src="js/main.js?v=4"></script>
+    <script src="js/navigation.js?v=4"></script>
     <script src="js/animations.js"></script>
     <script src="js/ambience.js"></script>
   </body>

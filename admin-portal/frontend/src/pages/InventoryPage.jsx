@@ -79,14 +79,21 @@ const outOfStock = inventory.filter(
   value={statusFilter}
   onChange={(e) => setStatusFilter(e.target.value)}
   style={{
-    padding: "8px",
-    marginBottom: "15px"
+    padding: "8px 12px",
+    marginBottom: "15px",
+    background: "#0f1d13",
+    color: "#eff6eb",
+    border: "1px solid rgba(255,255,255,0.15)",
+    borderRadius: "8px",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+    outline: "none"
   }}
 >
-  <option value="All">All</option>
-  <option value="In Stock">In Stock</option>
-  <option value="Low Stock">Low Stock</option>
-  <option value="Out Of Stock">Out Of Stock</option>
+  <option value="All" style={{ background: "#0f1d13", color: "#eff6eb" }}>All</option>
+  <option value="In Stock" style={{ background: "#0f1d13", color: "#eff6eb" }}>In Stock</option>
+  <option value="Low Stock" style={{ background: "#0f1d13", color: "#eff6eb" }}>Low Stock</option>
+  <option value="Out Of Stock" style={{ background: "#0f1d13", color: "#eff6eb" }}>Out Of Stock</option>
 </select>
       <table
         border="1"

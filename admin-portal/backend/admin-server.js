@@ -23,7 +23,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const pool = require('./src/config/db');
 
 const app = express();
-const PORT = 5002;
+const PORT = 5005;
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
 
 app.use(cors({ origin: '*', credentials: true }));

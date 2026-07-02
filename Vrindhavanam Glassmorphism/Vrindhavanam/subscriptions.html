@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+  <head>
+    <title>My Subscriptions — Vrindhavanam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --gold: #D4AF37;
+        --gold-light: #F1E5AC;
+        --gold-muted: #AA8A2E;
+        --forest: #0A1F0A;
+        --sage: #2D4C2D;
+        --cream: #FDFBF7;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Jost', sans-serif;
+        background: linear-gradient(rgba(10, 31, 10, 0.75), rgba(10, 31, 10, 0.88)), url('images/subscription.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: var(--cream);
+        min-height: 100vh;
+        padding: 40px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 96%;
+        margin: 0 auto;
+      }
+
+      .header-area {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        color: var(--cream);
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .back-link {
+        color: var(--gold-light);
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid rgba(241, 229, 172, 0.3);
+        padding: 8px 16px;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(5px);
+      }
+
+      .back-link:hover {
+        color: var(--gold);
+        border-color: var(--gold);
+        background: rgba(212, 175, 55, 0.1);
+        transform: translateX(-3px);
+      }
+
+      /* Glassmorphism Card Wrapper */
+      .glass-card {
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(212, 175, 55, 0.15);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+      }
+
+      .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      @media (max-width: 1024px) {
+        table {
+          min-width: 1100px; /* Horizontal scroll only on tablet/mobile */
+        }
+      }
+
+      th {
+        background: rgba(10, 31, 10, 0.85);
+        color: var(--gold-light);
+        font-weight: 600;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 12px 10px;
+        border-bottom: 2px solid rgba(212, 175, 55, 0.35);
+      }
+
+      td {
+        padding: 12px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--cream);
+        font-size: 0.9rem;
+        vertical-align: middle;
+      }
+
+      td:last-child {
+        white-space: nowrap; /* Action buttons on single line */
+      }
+
+      tr {
+        transition: background 0.3s ease;
+      }
+
+      tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      /* Form controls inside table */
+      select {
+        background: var(--forest);
+        color: var(--cream);
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 0.82rem;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      select:focus, select:hover {
+        border-color: var(--gold-light);
+        box-shadow: 0 0 8px rgba(241, 229, 172, 0.2);
+      }
+
+      input[type="number"] {
+        background: var(--forest);
+        color: var(--cream);
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        padding: 6px;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 0.82rem;
+        outline: none;
+        width: 55px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      input[type="number"]:focus, input[type="number"]:hover {
+        border-color: var(--gold-light);
+        box-shadow: 0 0 8px rgba(241, 229, 172, 0.2);
+      }
+
+      /* Custom Premium Buttons */
+      button {
+        font-family: 'Jost', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 500;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        outline: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Gold bordered actions (Update, Skip) */
+      button:not([onclick*="pause"]):not([onclick*="resume"]):not([onclick*="cancel"]) {
+        background: rgba(212, 175, 55, 0.05);
+        color: var(--gold-light);
+        border: 1px solid var(--gold);
+      }
+
+      button:not([onclick*="pause"]):not([onclick*="resume"]):not([onclick*="cancel"]):hover {
+        background: var(--gold);
+        color: var(--forest);
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+      }
+
+      /* Pause Action */
+      button[onclick*="pauseSubscription"] {
+        background: rgba(255, 193, 7, 0.08);
+        color: #ffc107;
+        border: 1px solid #ffc107;
+        margin-right: 6px;
+      }
+
+      button[onclick*="pauseSubscription"]:hover {
+        background: #ffc107;
+        color: #000;
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+      }
+
+      /* Resume Action */
+      button[onclick*="resumeSubscription"] {
+        background: rgba(40, 167, 69, 0.08);
+        color: #28a745;
+        border: 1px solid #28a745;
+        margin-right: 6px;
+      }
+
+      button[onclick*="resumeSubscription"]:hover {
+        background: #28a745;
+        color: #fff;
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+      }
+
+      /* Cancel Action */
+      button[onclick*="cancelSubscription"] {
+        background: rgba(220, 53, 69, 0.08);
+        color: #dc3545;
+        border: 1px solid #dc3545;
+      }
+
+      button[onclick*="cancelSubscription"]:hover {
+        background: #dc3545;
+        color: #fff;
+        box-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
+      }
+
+      /* Status Badges */
+      .status {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      }
+
+      .status.active {
+        background: #28a745;
+        color: white;
+      }
+
+      .status.paused {
+        background: #ffc107;
+        color: black;
+      }
+
+      .status.cancelled {
+        background: #dc3545;
+        color: white;
+      }
+
+      /* Responsive rules */
+      @media (max-width: 768px) {
+        body {
+          padding: 20px 10px;
+        }
+
+        .header-area {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .glass-card {
+          padding: 15px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header-area">
+        <h1>My Subscriptions</h1>
+        <a href="index.html" class="back-link">← Return to Estate</a>
+      </div>
+
+      <div class="glass-card">
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Variety</th>
+                <th>Frequency</th>
+                <th>Update Frequency</th>
+                <th>Quantity</th>
+                <th>Update Quantity</th>
+                <th>Price</th>
+                <th>Next Delivery</th>
+                <th>Skip</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="subscriptionTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/subscriptions.js"></script>
+  </body>
+</html>

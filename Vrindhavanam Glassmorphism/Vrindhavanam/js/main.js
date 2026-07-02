@@ -3,7 +3,7 @@ let cart = [];
 let cartOpen = false;
 let productsData = [];
 
-function addToCart(name, price, emoji, selectId) {
+window.addToCart = function addToCart(name, price, emoji, selectId) {
     // If a navigation/cart module provides `addToCart`, delegate to it
     if (typeof window.addToCart === 'function' && window.addToCart !== addToCart) {
         try { window.addToCart(name, price); return; } catch (e) { /* fallthrough */ }
@@ -28,7 +28,7 @@ function addToCart(name, price, emoji, selectId) {
     console.log("Cart array:", cart);
     updateCartUI();
     showToast(finalName + ' added to cart');
-}
+};
 function addToCartFromAPI(productName) {
 
     console.log("Clicked:", productName); // ✅ ADD
@@ -49,14 +49,18 @@ function addToCartFromAPI(productName) {
         return;
     }
 
-    addToCart(
+    window.addToCart(
     `${product.product_name}${product.weight ? ` (${product.weight})` : ""}`,
     "₹" + Number(product.price).toLocaleString("en-IN"),
     "🌿",
     null
 );
 }
-function removeFromCart(name) {
+window.removeFromCart = function removeFromCart(name) {
+    // If a navigation/cart module provides `removeFromCart`, delegate to it
+    if (typeof window.removeFromCart === 'function' && window.removeFromCart !== removeFromCart) {
+        try { window.removeFromCart(name); return; } catch (e) { /* fallthrough */ }
+    }
 
     if (Array.isArray(window.productPageCart)) {
         window.productPageCart =
@@ -77,9 +81,9 @@ function removeFromCart(name) {
 
     cart = cart.filter(i => i.name !== name);
     updateCartUI();
-}
+};
 
-function changeQty(name, delta) {
+window.changeQty = function changeQty(name, delta) {
     // Delegate if navigation cart is present
     if (typeof window.changeQty === 'function' && window.changeQty !== changeQty) {
         try { window.changeQty(name, delta); return; } catch (e) { /* fallthrough */ }
@@ -88,7 +92,7 @@ function changeQty(name, delta) {
     const item = cart.find(i => i.name === name);
     if (item) {
         item.qty += delta;
-        if (item.qty <= 0) removeFromCart(name);
+        if (item.qty <= 0) window.removeFromCart(name);
         else updateCartUI();
     }
 }
@@ -105,7 +109,10 @@ function getImageForProduct(name) {
         'Wild Cloves': 'images/plantation13.jpg',
         'Organic Highland Tea': 'images/tea.jpg',
         'Premium Estate Coffee': 'images/coffee1.jpg',
-        'Organic Forest Honey': 'images/honey.jpg'
+        'Organic Forest Honey': 'images/honey.jpg',
+        'Ashwagandha': 'images/ashwa.jpg',
+        'Ashwagandha Root Powder': 'images/ashwa.jpg',
+        'Ashwagandha Whole Root': 'images/gandha.jpg'
     };
     return map[baseName] || 'images/plantation 2.jpg';
 }
@@ -259,116 +266,68 @@ console.log("CARD FOUND");
                 );
             });
         if (product) {
-
-    const displayPrice =
-        "₹" + Number(product.price).toLocaleString("en-IN");
-
-    const varietyPrice =
-        card.querySelector(".product-variety-price");
-
-    if (varietyPrice) {
-        varietyPrice.textContent = displayPrice;
-    }
-
-    const mainPrice =
-        card.querySelector(".product-price");
-
-    if (mainPrice) {
-        mainPrice.textContent = product.weight;
-    }
-
-    // ADD HERE
-    const select = card.querySelector(".weight-select");
-
-    if (select) {
-        const originalWeight = parseFloat(product.weight.replace(/[^\d.]/g, ""));
-        const originalPrice = parseFloat(product.price);
-        const isHomepageSelect = select.hasAttribute("onchange");
-
-        select.querySelectorAll("option").forEach(option => {
-    const optText = option.textContent;
-    let selectedWeight = parseFloat(optText);
-
-    if (optText.toLowerCase().includes("kg")) {
-        selectedWeight = selectedWeight * 1000;
-    }
-
-    const calculatedPrice = (originalPrice / originalWeight) * selectedWeight;
-    const roundedPrice = Math.round(calculatedPrice);
-
-    console.log("optText =", optText);
-    console.log("selectedWeight =", selectedWeight);
-    console.log("originalPrice =", originalPrice);
-    console.log("originalWeight =", originalWeight);
-    console.log("calculatedPrice =", calculatedPrice);
-    console.log("roundedPrice =", roundedPrice);
-
-    if (isHomepageSelect) {
-        option.value = selectedWeight;
-    } else {
-        option.value = roundedPrice;
-    }
-
-    const weightText = selectedWeight >= 1000
-        ? (selectedWeight / 1000) + "kg"
-        : selectedWeight + "gm";
-
-    option.textContent =
-        `${weightText} — ₹${roundedPrice.toLocaleString("en-IN")}`;
-});
-        // Select first option by default
-        if (select) {
-    select.selectedIndex = 0;
-    if (select.options && select.options.length > 0) {
-        console.log(
-            "FIRST OPTION:",
-            select.options[0].value,
-            select.options[0].textContent
-        );
-    }
-}
-select.addEventListener("change", function () {
-
-    const varietyPrice =
-        card.querySelector(".product-variety-price");
-
-    if (varietyPrice) {
-        varietyPrice.textContent =
-            "₹" + Number(this.value).toLocaleString("en-IN");
-    }
-
-    const mainPrice =
-        card.querySelector(".product-price");
-
-    if (mainPrice) {
-        const selectedOption =
-            this.options[this.selectedIndex];
-
-        mainPrice.textContent =
-            selectedOption.text.split("—")[0].trim();
-    }
-});
-        // Update price display below dropdown
-        if (isHomepageSelect) {
-            const priceEl = card.querySelector(".product-price");
-            if (priceEl) {
-                updatePrice(select, priceEl.id);
-            }
-        } else {
             const varietyPrice = card.querySelector(".product-variety-price");
-            if (varietyPrice) {
-                varietyPrice.textContent = "₹" + Number(select.value).toLocaleString("en-IN");
-            }
             const mainPrice = card.querySelector(".product-price");
-            if (mainPrice) {
-                const selectedOption = select.options[select.selectedIndex];
-                mainPrice.textContent = selectedOption ? selectedOption.text.split('—')[0].trim() : '';
+            const select = card.querySelector(".weight-select");
+
+            if (select) {
+                // Find all entries in data matching this variety
+                const dbProducts = data.filter(p => {
+                    const apiName = p.variety_name.trim();
+                    return (
+                        apiName === name ||
+                        (apiName === "Biriyani" && name === "Biriyani Cardamom") ||
+                        (apiName === "For Chai" && name === "Chai Cardamom") ||
+                        (apiName === "Open/splits" && name === "Open") ||
+                        (apiName === "Superbold" && name === "Super Bold") ||
+                        (apiName === "Extrabold" && name === "Extra Bold")
+                    );
+                });
+
+                if (dbProducts.length > 0) {
+                    select.innerHTML = '';
+                    const seenWeights = new Set();
+                    dbProducts.forEach((item, idx) => {
+                        const weight = (item.weight || "").trim().toLowerCase();
+                        if (seenWeights.has(weight)) return;
+                        seenWeights.add(weight);
+
+                        const option = document.createElement('option');
+                        option.value = item.price;
+                        option.textContent = `${item.weight} — ₹${Number(item.price).toLocaleString("en-IN")}`;
+                        if (seenWeights.size === 1) option.selected = true;
+                        select.appendChild(option);
+                    });
+                }
+                
+                // Select first option by default
+                select.selectedIndex = 0;
+
+                // Update initial text views
+                if (select.options.length > 0) {
+                    const firstOpt = select.options[0];
+                    if (varietyPrice) {
+                        varietyPrice.textContent = "₹" + Number(firstOpt.value).toLocaleString("en-IN");
+                    }
+                    if (mainPrice) {
+                        mainPrice.textContent = firstOpt.text.split("—")[0].trim();
+                    }
+                }
+
+                // Add change listener
+                select.addEventListener("change", function () {
+                    if (varietyPrice) {
+                        varietyPrice.textContent = "₹" + Number(this.value).toLocaleString("en-IN");
+                    }
+                    if (mainPrice) {
+                        const selectedOption = this.options[this.selectedIndex];
+                        if (selectedOption) {
+                            mainPrice.textContent = selectedOption.text.split("—")[0].trim();
+                        }
+                    }
+                });
             }
         }
-    }
-
-    console.log("Updated:", name, product.price);
-}
         // ADD THIS AFTER THE LOOP
         /*document.querySelectorAll(".weight-select").forEach(select => {
 
@@ -383,54 +342,6 @@ select.addEventListener("change", function () {
     })
     .catch(err => console.log("API Error:", err));
 });
-// 2. PRICE CALC FUNCTION
-function updatePrice(select, priceId) {
-
-    if (!productsData || productsData.length === 0) return;
-
-    const priceEl = document.getElementById(priceId);
-    if (!select || !priceEl) return;
-
-    const card = select.closest(".product-variety-card");
-
-    const productId = card.dataset.productId;
-
-    console.log("CARD PRODUCT ID:", productId);
-
-    const product = productsData.find(
-        p => p.product_id.trim() === productId.trim()
-    );
-
-    console.log("FOUND PRODUCT:", product);
-
-    if (!product) return;
-
-    console.log("PRODUCT PRICE:", product.price);
-    console.log("PRODUCT WEIGHT:", product.weight);
-
-    console.log("SELECT VALUE =", select.value);
-console.log("SELECT TYPE =", typeof select.value);
-
-const selectedWeight = Number(select.value);
-
-    const originalWeight =
-        parseFloat(product.weight.replace(/[^\d.]/g, ''));
-
-    const originalPrice =
-        parseFloat(product.price);
-
-    console.log("SELECTED WEIGHT:", selectedWeight);
-    console.log("ORIGINAL WEIGHT:", originalWeight);
-    console.log("ORIGINAL PRICE:", originalPrice);
-
-    const calculatedPrice =
-        (originalPrice / originalWeight) * selectedWeight;
-
-    console.log("CALCULATED PRICE:", calculatedPrice);
-
-    priceEl.textContent =
-        "₹" + Math.round(calculatedPrice).toLocaleString("en-IN");
-}
 // TOAST
 let toastTimer;
 function showToast(msg) {

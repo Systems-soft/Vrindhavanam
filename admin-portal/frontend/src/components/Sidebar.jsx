@@ -11,7 +11,6 @@ const navItems = [
   { name: 'Batches', path: '/admin/batches' },
   { name: 'Quality Grades', path: '/admin/grades' },
   { name: 'Subscriptions', path: '/admin/subscriptions' },
-  { name: 'Newsletter', path: '/admin/newsletter' },
   { name: 'WhatsApp', path: '/admin/whatsapp' },
   { name: 'Stock Alerts', path: '/admin/stock-alerts' },
   { name: 'Reviews', path: '/admin/reviews' },

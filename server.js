@@ -16,11 +16,28 @@ const db = mysql.createPool({
     database: 'vrindhavanam_db',
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000
 });
 
 db.on('error', (err) => {
-    console.error('MySQL Pool Error:', err);
+    console.error('MySQL Pool Error:', err.message);
+    // Pool will automatically recreate connections, no need to crash
+});
+
+db.on('connection', (connection) => {
+    connection.on('error', (err) => {
+        console.error('MySQL Connection Error:', err.message);
+    });
+});
+
+// Prevent unhandled rejection crashes
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err.message);
+});
+process.on('unhandledRejection', (err) => {
+    console.error('Unhandled Rejection:', err);
 });
 
 console.log("MySQL Pool Created ✅");
@@ -51,6 +68,28 @@ db.query(createTableSQL, (err) => {
     else console.log('Products table ensured ✅');
 });
 
+// Ensure subscriptions table exists
+const createSubsTableSQL = `
+CREATE TABLE IF NOT EXISTS subscriptions (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    customer_id BIGINT UNSIGNED,
+    channel VARCHAR(50) NOT NULL,
+    status ENUM('active','paused','cancelled','expired') DEFAULT 'active',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    product_id INT,
+    variant_id INT,
+    frequency ENUM('Monthly','Every 2 Months') DEFAULT 'Monthly',
+    quantity INT DEFAULT 1,
+    price DECIMAL(10,2),
+    next_delivery DATE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`;
+
+db.query(createSubsTableSQL, (err) => {
+    if (err) console.error('Error creating subscriptions table:', err);
+    else console.log('Subscriptions table ensured ✅');
+});
+
 function excelDateToJSDate(serial) {
     const utc_days = Math.floor(serial - 25569);
     const utc_value = utc_days * 86400;
@@ -58,80 +97,140 @@ function excelDateToJSDate(serial) {
     return date_info.toISOString().split('T')[0];
 }
 
-function importExcelToDatabase(){
+const watchTimeouts = {};
+
+function writeDbToProductsJson() {
+    db.query('SELECT * FROM products', (err, results) => {
+        if (err) {
+            console.error("Error querying products for products.json:", err);
+            return;
+        }
+        const jsonPath = path.join(root, 'data', 'products.json');
+        try {
+            fs.writeFileSync(jsonPath, JSON.stringify(results, null, 2), 'utf8');
+            console.log(`Updated static products.json file with ${results.length} products ✅`);
+        } catch (writeErr) {
+            console.error("Error writing products.json:", writeErr);
+        }
+    });
+}
+
+function syncExcelFileToDatabase(file) {
+    const filePath = path.join(root, file);
+    if (!fs.existsSync(filePath)) {
+        return;
+    }
     try {
-        const excelFiles = ['tea.xlsx', 'cardamom.xlsx', 'honey.xlsx','coffee.xlsx','pepper.xlsx','cloves.xlsx','ghee.xlsx','turmeric.xlsx','ginger.xlsx','cashew.xlsx'];
-        excelFiles.forEach(file => {
-            const filePath = path.join(root, file);
-            if (!fs.existsSync(filePath)) {
+        const workbook = xlsx.readFile(filePath);
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const products = xlsx.utils.sheet_to_json(sheet);
+        if (products.length === 0) {
+            console.log(`No records found in ${file}.`);
+            return;
+        }
+
+        console.log(`Syncing ${products.length} products from ${file}...`);
+
+        // Collect all columns/keys in Excel row objects
+        const excelColumns = new Set();
+        products.forEach(row => {
+            Object.keys(row).forEach(key => {
+                const cleaned = key.trim();
+                if (cleaned) excelColumns.add(cleaned);
+            });
+        });
+
+        // Query existing columns in products table
+        db.query('SHOW COLUMNS FROM products', (err, cols) => {
+            if (err) {
+                console.error("Error querying columns from DB:", err);
                 return;
             }
-            const workbook = xlsx.readFile(filePath);
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const products = xlsx.utils.sheet_to_json(sheet);
-            console.log(`Syncing ${products.length} products from ${file}...`);
-            products.forEach(product => {
+            const dbColumns = new Set(cols.map(c => c.Field.toLowerCase()));
+
+            // Find missing columns and alter table
+            const alterPromises = [];
+            excelColumns.forEach(col => {
+                const normalized = col.toLowerCase();
+                if (!dbColumns.has(normalized)) {
+                    alterPromises.push(new Promise((resolve) => {
+                        db.query(`ALTER TABLE products ADD COLUMN \`${col}\` TEXT DEFAULT NULL`, (alterErr) => {
+                            if (alterErr) {
+                                console.error(`Error adding column \`${col}\`:`, alterErr);
+                            } else {
+                                console.log(`Dynamically added column \`${col}\` to database table \`products\` ✅`);
+                            }
+                            resolve(); // resolve anyway to continue sync
+                        });
+                    }));
+                }
+            });
+
+            Promise.all(alterPromises).then(() => {
+                const columnsArray = Array.from(excelColumns);
+                const insertFields = columnsArray.map(c => `\`${c}\``).join(', ');
+                const valuePlaceholders = columnsArray.map(() => '?').join(', ');
+                const updateClauses = columnsArray.map(c => `\`${c}\` = VALUES(\`${c}\`)`).join(', ');
+
                 const sql = `
-                INSERT INTO products
-                (
-                    serial_no,
-                    product_name,
-                    product_id,
-                    variety_name,
-                    colour,
-                    grade,
-                    weight,
-                    image_url,
-                    date,
-                    daily_price,
-                    factor,
-                    size,
-                    stock_status,
-                    notes,
-                    price
-                )
-                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                ON DUPLICATE KEY UPDATE
-                    product_name = VALUES(product_name),
-                    variety_name = VALUES(variety_name),
-                    colour = VALUES(colour),
-                    grade = VALUES(grade),
-                    weight = VALUES(weight),
-                    image_url = VALUES(image_url),
-                    date = VALUES(date),
-                    daily_price = VALUES(daily_price),
-                    factor = VALUES(factor),
-                    size = VALUES(size),
-                    stock_status = VALUES(stock_status),
-                    notes = VALUES(notes),
-                    price = VALUES(price)
+                    INSERT INTO products (${insertFields})
+                    VALUES (${valuePlaceholders})
+                    ON DUPLICATE KEY UPDATE ${updateClauses}
                 `;
-                db.query(sql, [
-                    product.serial_no,
-                    product.product_name,
-                    product.product_id,
-                    product.variety_name,
-                    product.colour,
-                    product.grade,
-                    product.weight,
-                    product.image_url,
-                    product.date ? excelDateToJSDate(product.date) : null,
-                    product.daily_price,
-                    product.factor,
-                    product.size,
-                    product.stock_status,
-                    product.notes,
-                    product.price
-                ], (err) => {
-                    if (err) {
-                        console.log(`Insert/Update error for ${product.product_id} in ${file}:`, err.message);
-                    } else {
-                        console.log(`Updated product: ${product.product_id} (${product.product_name} - ${product.variety_name})`);
-                    }
+
+                let completed = 0;
+                products.forEach(product => {
+                    const values = columnsArray.map(colName => {
+                        let val = product[colName];
+                        if (val === undefined) {
+                            const matchedKey = Object.keys(product).find(k => k.trim().toLowerCase() === colName.toLowerCase());
+                            val = matchedKey ? product[matchedKey] : null;
+                        }
+                        if (colName.toLowerCase() === 'date' && val) {
+                            return excelDateToJSDate(val);
+                        }
+                        return val !== undefined ? val : null;
+                    });
+
+                    db.query(sql, values, (queryErr) => {
+                        if (queryErr) {
+                            console.error(`DB Query Error for product ID ${product.product_id || product.serial_no} in ${file}:`, queryErr.message);
+                        } else {
+                            console.log(`Synced product ${product.product_id || product.serial_no} (${product.product_name} - ${product.variety_name})`);
+                        }
+                        completed++;
+                        if (completed === products.length) {
+                            console.log(`${file} database sync complete ✅`);
+                            writeDbToProductsJson();
+                        }
+                    });
                 });
             });
-            console.log(`${file} synced successfully ✅`);
         });
+    } catch(err) {
+        console.error(`Error processing ${file}:`, err);
+    }
+}
+
+function importExcelToDatabase(){
+    try {
+        const excelFiles = ['tea.xlsx', 'cardamom.xlsx', 'honey.xlsx','coffee.xlsx','pepper.xlsx','cloves.xlsx','ghee.xlsx','turmeric.xlsx','ginger.xlsx','cashew.xlsx','ashwagandha.xlsx', 'garcinia.xlsx', 'pickle.xlsx'];
+        excelFiles.forEach(file => {
+            syncExcelFileToDatabase(file);
+        });
+
+        // Set up fs.watch file watcher on storefront directory to automatically sync on edits
+        console.log(`Setting up live Excel file watcher in directory: ${root} 👁️`);
+        fs.watch(root, (eventType, filename) => {
+            if (filename && excelFiles.includes(filename)) {
+                clearTimeout(watchTimeouts[filename]);
+                watchTimeouts[filename] = setTimeout(() => {
+                    console.log(`Live sync triggered: detected change in ${filename} 🔄`);
+                    syncExcelFileToDatabase(filename);
+                }, 1500);
+            }
+        });
+
     } catch(error) {
         console.log("IMPORT ERROR:", error);
     }
@@ -306,6 +405,326 @@ if (req.url === "/whoami") {
         });
         return;
     }
+
+    // GET /api/subscriptions
+    if (req.url === '/api/subscriptions' && req.method === 'GET') {
+        console.log("API /api/subscriptions called");
+        db.query("SELECT * FROM subscriptions", (err, results) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(results));
+        });
+        return;
+    }
+
+    // GET /api/subscription-details
+    if (req.url === "/api/subscription-details" && req.method === "GET") {
+        db.query(`
+            SELECT
+                s.id,
+                s.customer_id,
+                s.status,
+                s.frequency,
+                s.quantity,
+                s.price,
+                s.next_delivery,
+                p.product_name,
+                p.variety_name,
+                p.image_url,
+                p.stock_quantity
+            FROM subscriptions s
+            JOIN products p ON s.product_id = p.id
+        `, (err, results) => {
+            if (err) {
+                res.writeHead(500, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ success: false, error: err.message }));
+            }
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(results));
+        });
+        return;
+    }
+
+    // POST /api/subscriptions (Create subscription)
+    if (req.url === "/api/subscriptions" && req.method === "POST") {
+        let body = "";
+        req.on("data", chunk => {
+            body += chunk;
+        });
+        req.on("end", () => {
+            let data;
+            try {
+                data = JSON.parse(body);
+            } catch (e) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ success: false, error: "Invalid JSON" }));
+            }
+
+            // Server-side validation
+            if (!data.product_id || !data.frequency || !data.quantity || data.quantity < 1) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ success: false, error: "Missing or invalid subscription fields" }));
+            }
+
+            db.query(
+                `INSERT INTO subscriptions (
+                    customer_id,
+                    product_id,
+                    variant_id,
+                    channel,
+                    frequency,
+                    quantity,
+                    price,
+                    next_delivery
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    data.customer_id || 1,
+                    data.product_id,
+                    data.variant_id || 1,
+                    data.channel || "Website",
+                    data.frequency,
+                    data.quantity,
+                    data.price,
+                    data.next_delivery
+                ],
+                (err, result) => {
+                    if (err) {
+                        res.writeHead(500, { "Content-Type": "application/json" });
+                        return res.end(JSON.stringify({ success: false, error: err.message }));
+                    }
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({
+                        success: true,
+                        subscriptionId: result.insertId
+                    }));
+                }
+            );
+        });
+        return;
+    }
+
+    // POST /api/subscriptions/pause
+    if (req.url === "/api/subscriptions/pause" && req.method === "POST") {
+        let body = "";
+        req.on("data", chunk => { body += chunk; });
+        req.on("end", () => {
+            let data;
+            try {
+                data = JSON.parse(body);
+            } catch (e) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ success: false, error: "Invalid JSON" }));
+            }
+            db.query(
+                `UPDATE subscriptions SET status='paused' WHERE id=?`,
+                [data.id],
+                (err) => {
+                    if (err) {
+                        res.writeHead(500, { "Content-Type": "application/json" });
+                        return res.end(JSON.stringify({ success: false, error: err.message }));
+                    }
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ success: true }));
+                }
+            );
+        });
+        return;
+    }
+
+    // POST /api/subscriptions/resume
+    if (req.url === "/api/subscriptions/resume" && req.method === "POST") {
+        let body = "";
+        req.on("data", chunk => { body += chunk; });
+        req.on("end", () => {
+            let data;
+            try {
+                data = JSON.parse(body);
+            } catch (e) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ success: false, error: "Invalid JSON" }));
+            }
+            db.query(
+                `UPDATE subscriptions SET status='active' WHERE id=?`,
+                [data.id],
+                (err) => {
+                    if (err) {
+                        res.writeHead(500, { "Content-Type": "application/json" });
+                        return res.end(JSON.stringify({ success: false, error: err.message }));
+                    }
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ success: true }));
+                }
+            );
+        });
+        return;
+    }
+
+    // POST /api/subscriptions/skip
+    if (req.url === "/api/subscriptions/skip" && req.method === "POST") {
+        let body = "";
+        req.on("data", chunk => { body += chunk; });
+        req.on("end", () => {
+            let data;
+            try {
+                data = JSON.parse(body);
+            } catch (e) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ success: false, error: "Invalid JSON" }));
+            }
+            db.query(
+                `UPDATE subscriptions
+                 SET next_delivery = CASE
+                     WHEN frequency='Monthly' THEN DATE_ADD(next_delivery, INTERVAL 1 MONTH)
+                     WHEN frequency='Every 2 Months' THEN DATE_ADD(next_delivery, INTERVAL 2 MONTH)
+                     ELSE next_delivery
+                 END
+                 WHERE id=?`,
+                [data.id],
+                (err) => {
+                    if (err) {
+                        res.writeHead(500, { "Content-Type": "application/json" });
+                        return res.end(JSON.stringify({ success: false, error: err.message }));
+                    }
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ success: true }));
+                }
+            );
+        });
+        return;
+    }
+
+    // POST /api/subscriptions/cancel
+    if (req.url === "/api/subscriptions/cancel" && req.method === "POST") {
+        let body = "";
+        req.on("data", chunk => { body += chunk; });
+        req.on("end", () => {
+            let data;
+            try {
+                data = JSON.parse(body);
+            } catch (e) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ success: false, error: "Invalid JSON" }));
+            }
+            db.query(
+                `UPDATE subscriptions SET status='cancelled' WHERE id=?`,
+                [data.id],
+                (err) => {
+                    if (err) {
+                        res.writeHead(500, { "Content-Type": "application/json" });
+                        return res.end(JSON.stringify({ success: false, error: err.message }));
+                    }
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ success: true }));
+                }
+            );
+        });
+        return;
+    }
+
+    // POST /api/subscriptions/update-frequency
+    if (req.url === "/api/subscriptions/update-frequency" && req.method === "POST") {
+        let body = "";
+        req.on("data", chunk => { body += chunk; });
+        req.on("end", () => {
+            let data;
+            try {
+                data = JSON.parse(body);
+            } catch (e) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ success: false, error: "Invalid JSON" }));
+            }
+            db.query(
+                `UPDATE subscriptions
+                 SET frequency=?,
+                     next_delivery = CASE
+                         WHEN ?='Monthly' THEN DATE_ADD(CURDATE(), INTERVAL 1 MONTH)
+                         WHEN ?='Every 2 Months' THEN DATE_ADD(CURDATE(), INTERVAL 2 MONTH)
+                         ELSE next_delivery
+                     END
+                 WHERE id=?`,
+                [data.frequency, data.frequency, data.frequency, data.id],
+                (err) => {
+                    if (err) {
+                        res.writeHead(500, { "Content-Type": "application/json" });
+                        return res.end(JSON.stringify({ success: false, error: err.message }));
+                    }
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ success: true }));
+                }
+            );
+        });
+        return;
+    }
+
+    // POST /api/subscriptions/update-quantity
+    if (req.url === "/api/subscriptions/update-quantity" && req.method === "POST") {
+        let body = "";
+        req.on("data", chunk => { body += chunk; });
+        req.on("end", () => {
+            let data;
+            try {
+                data = JSON.parse(body);
+            } catch (e) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                return res.end(JSON.stringify({ success: false, error: "Invalid JSON" }));
+            }
+            db.query(
+                `UPDATE subscriptions SET quantity=?, price=? WHERE id=?`,
+                [data.quantity, data.price, data.id],
+                (err) => {
+                    if (err) {
+                        res.writeHead(500, { "Content-Type": "application/json" });
+                        return res.end(JSON.stringify({ success: false, error: err.message }));
+                    }
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ success: true }));
+                }
+            );
+        });
+        return;
+    }
+
+
+    if (req.url.split('?')[0].startsWith("/api/variants/")) {
+
+    console.log("✅ API HIT:", req.url);
+
+    const product = req.url.split("/").pop().toLowerCase();
+
+    try {
+
+        const filePath = path.join(root, `${product}.xlsx`);
+        console.log("Reading:", filePath);
+
+        const workbook = xlsx.readFile(filePath);
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+        const data = xlsx.utils.sheet_to_json(sheet);
+
+        res.writeHead(200, {
+            "Content-Type": "application/json"
+        });
+
+        res.end(JSON.stringify(data));
+
+    } catch (error) {
+
+        console.log("❌ ERROR:", error.message);
+
+        res.writeHead(500, {
+            "Content-Type": "application/json"
+        });
+
+        res.end(JSON.stringify({
+            error: "Excel not found or invalid"
+        }));
+    }
+
+    return;
+}
     const requestPath = decodeURIComponent(req.url.split('?')[0]);
     const route = requestPath === '/' ? 'index.html' : requestPath.replace(/^\//, '');
     const filePath = path.join(root, route);

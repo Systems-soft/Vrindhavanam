@@ -17,4 +17,10 @@ pool.on('error', (err) => {
   console.error('MySQL Pool Error:', err);
 });
 
+pool.on('connection', (connection) => {
+  connection.on('error', (err) => {
+    console.error('MySQL Connection Error:', err.message || err);
+  });
+});
+
 module.exports = pool;

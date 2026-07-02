@@ -135,19 +135,26 @@ const handleViewOrder = async (orderId) => {
   value={statusFilter}
   onChange={(e) => setStatusFilter(e.target.value)}
   style={{
-    padding: "8px",
+    padding: "8px 12px",
     marginLeft: "10px",
-    marginBottom: "15px"
+    marginBottom: "15px",
+    background: "#0f1d13",
+    color: "#eff6eb",
+    border: "1px solid rgba(255,255,255,0.15)",
+    borderRadius: "8px",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+    outline: "none"
   }}
 >
-  <option value="All">All</option>
-  <option value="Pending">Pending</option>
-<option value="Confirmed">Confirmed</option>
-<option value="Packed">Packed</option>
-<option value="Shipped">Shipped</option>
-<option value="Delivered">Delivered</option>
-<option value="Cancelled">Cancelled</option>
-<option value="Refunded">Refunded</option>
+  <option value="All" style={{ background: "#0f1d13", color: "#eff6eb" }}>All</option>
+  <option value="Pending" style={{ background: "#0f1d13", color: "#eff6eb" }}>Pending</option>
+  <option value="Confirmed" style={{ background: "#0f1d13", color: "#eff6eb" }}>Confirmed</option>
+  <option value="Packed" style={{ background: "#0f1d13", color: "#eff6eb" }}>Packed</option>
+  <option value="Shipped" style={{ background: "#0f1d13", color: "#eff6eb" }}>Shipped</option>
+  <option value="Delivered" style={{ background: "#0f1d13", color: "#eff6eb" }}>Delivered</option>
+  <option value="Cancelled" style={{ background: "#0f1d13", color: "#eff6eb" }}>Cancelled</option>
+  <option value="Refunded" style={{ background: "#0f1d13", color: "#eff6eb" }}>Refunded</option>
 </select>
 
 <div
@@ -343,18 +350,25 @@ const handleViewOrder = async (orderId) => {
     );
   }}
   style={{
-    padding: "8px",
-    borderRadius: "6px",
-    marginBottom: "15px"
+    padding: "8px 12px",
+    borderRadius: "8px",
+    marginBottom: "15px",
+    background: "#0f1d13",
+    color: "#eff6eb",
+    border: "1px solid rgba(255,255,255,0.18)",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+    outline: "none",
+    width: "200px"
   }}
 >
-  <option value="Pending">Pending</option>
-  <option value="Confirmed">Confirmed</option>
-  <option value="Packed">Packed</option>
-  <option value="Shipped">Shipped</option>
-  <option value="Delivered">Delivered</option>
-  <option value="Cancelled">Cancelled</option>
-  <option value="Refunded">Refunded</option>
+  <option value="Pending" style={{ background: "#0f1d13", color: "#eff6eb" }}>Pending</option>
+  <option value="Confirmed" style={{ background: "#0f1d13", color: "#eff6eb" }}>Confirmed</option>
+  <option value="Packed" style={{ background: "#0f1d13", color: "#eff6eb" }}>Packed</option>
+  <option value="Shipped" style={{ background: "#0f1d13", color: "#eff6eb" }}>Shipped</option>
+  <option value="Delivered" style={{ background: "#0f1d13", color: "#eff6eb" }}>Delivered</option>
+  <option value="Cancelled" style={{ background: "#0f1d13", color: "#eff6eb" }}>Cancelled</option>
+  <option value="Refunded" style={{ background: "#0f1d13", color: "#eff6eb" }}>Refunded</option>
 </select>
 
 <hr />

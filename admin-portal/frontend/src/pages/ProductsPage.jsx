@@ -4,7 +4,7 @@ export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
 const [selectedProduct, setSelectedProduct] = useState(null);
-const [selectedCategory, setSelectedCategory] = useState("cardamom");
+const [selectedCategory, setSelectedCategory] = useState("all");
 
 const handleEdit = (product) => {
   setSelectedProduct(product);
@@ -65,27 +65,43 @@ const handleSave = async () => {
       });
   }, []);
 
+  const uniqueProductNames = [
+    ...new Set(products.map((p) => p.product_name))
+  ].filter(Boolean).sort();
+
+  const filteredProducts = selectedCategory === "all"
+    ? products
+    : products.filter(
+        (p) =>
+          p.product_name &&
+          p.product_name.toLowerCase() === selectedCategory.toLowerCase()
+      );
+
   return (
     <div className="admin-panel">
       <h2>Products Management</h2>
       <select
-  value={selectedCategory}
-onChange={(e) => setSelectedCategory(e.target.value)}
-  style={{
-    marginBottom: "20px",
-    padding: "8px",
-    borderRadius: "6px"
-  }}
->
-  <option value="cardamom">Cardamom</option>
-  <option value="pepper">Pepper</option>
-  <option value="honey">Honey</option>
-  <option value="coffee">Coffee</option>
-  <option value="cloves">Cloves</option>
-  <option value="ghee">Ghee</option>
-  <option value="tea">Tea</option>
-  <option value="turmeric">Turmeric</option>
-</select>
+        value={selectedCategory}
+        onChange={(e) => setSelectedCategory(e.target.value)}
+        style={{
+          marginBottom: "20px",
+          padding: "8px 12px",
+          borderRadius: "8px",
+          background: "#0f1d13",
+          color: "#eff6eb",
+          border: "1px solid rgba(255,255,255,0.15)",
+          fontSize: "0.9rem",
+          cursor: "pointer",
+          outline: "none"
+        }}
+      >
+        <option value="all" style={{ background: "#0f1d13", color: "#eff6eb" }}>All Products</option>
+        {uniqueProductNames.map((name) => (
+          <option key={name} value={name} style={{ background: "#0f1d13", color: "#eff6eb" }}>
+            {name}
+          </option>
+        ))}
+      </select>
 
 
       <table border="1" cellPadding="8">
@@ -103,8 +119,8 @@ onChange={(e) => setSelectedCategory(e.target.value)}
         </thead>
 
         <tbody>
-          {Array.isArray(products) &&
-            products.map((p) => (
+          {Array.isArray(filteredProducts) &&
+            filteredProducts.map((p) => (
              <tr key={`${p.product_id}-${p.weight}`}>
                 <td>{p.product_id}</td>
                 <td>{p.product_name}</td>
@@ -126,10 +142,11 @@ onChange={(e) => setSelectedCategory(e.target.value)}
       </table>
       {showEditModal && (
   <div
+    onClick={() => setShowEditModal(false)}
     style={{
       position: "fixed",
       inset: 0,
-      background: "rgba(0,0,0,0.7)",
+      background: "rgba(0,0,0,0.72)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -137,111 +154,203 @@ onChange={(e) => setSelectedCategory(e.target.value)}
     }}
   >
     <div
-  style={{
-    background: "#fff",
-    color: "#000",
-    padding: "20px",
-    borderRadius: "10px",
-    width: "500px"
-  }}
->
-     <h3>Edit Product</h3>
-<div style={{ marginBottom: "10px" }}>
-  <label>Name</label>
-  <input
-    type="text"
-    value={selectedProduct?.product_name || ""}
-    onChange={(e) =>
-      setSelectedProduct({
-        ...selectedProduct,
-        product_name: e.target.value
-      })
-    }
-  />
-</div>
+      onClick={(e) => e.stopPropagation()}
+      style={{
+        background: "linear-gradient(160deg, #0d1c10 0%, #111f14 100%)",
+        color: "#eff6eb",
+        padding: "28px 32px",
+        borderRadius: "16px",
+        width: "500px",
+        maxWidth: "90vw",
+        maxHeight: "90vh",
+        overflowY: "auto",
+        border: "1px solid rgba(255,255,255,0.1)",
+        boxShadow: "0 24px 64px rgba(0,0,0,0.5)",
+        backdropFilter: "blur(16px)"
+      }}
+    >
+      <h3 style={{ color: "#d7b56d", marginTop: 0, marginBottom: "20px", fontSize: "1.1rem", fontWeight: 600 }}>Edit Product</h3>
 
-<div style={{ marginBottom: "10px" }}>
-  <label>Variety</label>
+      <div style={{ marginBottom: "14px" }}>
+        <label style={{ display: "block", marginBottom: "5px", color: "rgba(239,246,235,0.75)", fontSize: "0.85rem" }}>Name</label>
+        <input
+          type="text"
+          value={selectedProduct?.product_name || ""}
+          onChange={(e) =>
+            setSelectedProduct({
+              ...selectedProduct,
+              product_name: e.target.value
+            })
+          }
+          style={{
+            width: "100%",
+            padding: "9px 12px",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.14)",
+            borderRadius: "8px",
+            color: "#eff6eb",
+            fontSize: "0.9rem",
+            outline: "none"
+          }}
+        />
+      </div>
 
-  <input
-    type="text"
-    value={selectedProduct?.variety_name || ""}
-    onChange={(e) =>
-      setSelectedProduct({
-        ...selectedProduct,
-        variety_name: e.target.value
-      })
-    }
-  />
-</div>
-<div style={{ marginBottom: "10px" }}>
-  <label>Weight</label>
+      <div style={{ marginBottom: "14px" }}>
+        <label style={{ display: "block", marginBottom: "5px", color: "rgba(239,246,235,0.75)", fontSize: "0.85rem" }}>Variety</label>
+        <input
+          type="text"
+          value={selectedProduct?.variety_name || ""}
+          onChange={(e) =>
+            setSelectedProduct({
+              ...selectedProduct,
+              variety_name: e.target.value
+            })
+          }
+          style={{
+            width: "100%",
+            padding: "9px 12px",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.14)",
+            borderRadius: "8px",
+            color: "#eff6eb",
+            fontSize: "0.9rem",
+            outline: "none"
+          }}
+        />
+      </div>
 
-  <input
-    type="text"
-    value={selectedProduct?.weight || ""}
-    onChange={(e) =>
-      setSelectedProduct({
-        ...selectedProduct,
-        weight: e.target.value
-      })
-    }
-  />
-</div>
+      <div style={{ marginBottom: "14px" }}>
+        <label style={{ display: "block", marginBottom: "5px", color: "rgba(239,246,235,0.75)", fontSize: "0.85rem" }}>Weight</label>
+        <input
+          type="text"
+          value={selectedProduct?.weight || ""}
+          onChange={(e) =>
+            setSelectedProduct({
+              ...selectedProduct,
+              weight: e.target.value
+            })
+          }
+          style={{
+            width: "100%",
+            padding: "9px 12px",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.14)",
+            borderRadius: "8px",
+            color: "#eff6eb",
+            fontSize: "0.9rem",
+            outline: "none"
+          }}
+        />
+      </div>
 
-<div style={{ marginBottom: "10px" }}>
-  <label>Price</label>
-  <input
-    type="number"
-    value={selectedProduct?.price || ""}
-    onChange={(e) =>
-      setSelectedProduct({
-        ...selectedProduct,
-        price: e.target.value
-      })
-    }
-  />
-</div>
+      <div style={{ marginBottom: "14px" }}>
+        <label style={{ display: "block", marginBottom: "5px", color: "rgba(239,246,235,0.75)", fontSize: "0.85rem" }}>Price</label>
+        <input
+          type="number"
+          value={selectedProduct?.price || ""}
+          onChange={(e) =>
+            setSelectedProduct({
+              ...selectedProduct,
+              price: e.target.value
+            })
+          }
+          style={{
+            width: "100%",
+            padding: "9px 12px",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.14)",
+            borderRadius: "8px",
+            color: "#eff6eb",
+            fontSize: "0.9rem",
+            outline: "none"
+          }}
+        />
+      </div>
 
-<div style={{ marginBottom: "10px" }}>
-  <label>Stock Quantity</label>
-  <input
-    type="number"
-    value={selectedProduct?.stock_quantity || ""}
-    onChange={(e) =>
-      setSelectedProduct({
-        ...selectedProduct,
-        stock_quantity: e.target.value
-      })
-    }
-  />
-</div>
+      <div style={{ marginBottom: "14px" }}>
+        <label style={{ display: "block", marginBottom: "5px", color: "rgba(239,246,235,0.75)", fontSize: "0.85rem" }}>Stock Quantity</label>
+        <input
+          type="number"
+          value={selectedProduct?.stock_quantity || ""}
+          onChange={(e) =>
+            setSelectedProduct({
+              ...selectedProduct,
+              stock_quantity: e.target.value
+            })
+          }
+          style={{
+            width: "100%",
+            padding: "9px 12px",
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.14)",
+            borderRadius: "8px",
+            color: "#eff6eb",
+            fontSize: "0.9rem",
+            outline: "none"
+          }}
+        />
+      </div>
 
-<div style={{ marginBottom: "10px" }}>
-  <label>Status</label>
+      <div style={{ marginBottom: "20px" }}>
+        <label style={{ display: "block", marginBottom: "5px", color: "rgba(239,246,235,0.75)", fontSize: "0.85rem" }}>Status</label>
+        <select
+          value={selectedProduct?.stock_status || ""}
+          onChange={(e) =>
+            setSelectedProduct({
+              ...selectedProduct,
+              stock_status: e.target.value
+            })
+          }
+          style={{
+            width: "100%",
+            padding: "9px 12px",
+            background: "#0f1d13",
+            border: "1px solid rgba(255,255,255,0.14)",
+            borderRadius: "8px",
+            color: "#eff6eb",
+            fontSize: "0.9rem",
+            cursor: "pointer",
+            outline: "none"
+          }}
+        >
+          <option value="In Stock" style={{ background: "#0f1d13", color: "#eff6eb" }}>In Stock</option>
+          <option value="Out Of Stock" style={{ background: "#0f1d13", color: "#eff6eb" }}>Out Of Stock</option>
+          <option value="Low Stock" style={{ background: "#0f1d13", color: "#eff6eb" }}>Low Stock</option>
+        </select>
+      </div>
 
-  <select
-    value={selectedProduct?.stock_status || ""}
-    onChange={(e) =>
-      setSelectedProduct({
-        ...selectedProduct,
-        stock_status: e.target.value
-      })
-    }
-  >
-    <option value="In Stock">In Stock</option>
-    <option value="Out Of Stock">Out Of Stock</option>
-    <option value="Low Stock">Low Stock</option>
-  </select>
-</div>
-<button onClick={handleSave}>
-  Save Changes
-</button>
-<button
-  onClick={() => setShowEditModal(false)}
->
-  Close
-</button>
+      <div style={{ display: "flex", gap: "10px" }}>
+        <button
+          onClick={handleSave}
+          style={{
+            padding: "10px 22px",
+            borderRadius: "8px",
+            border: "none",
+            background: "linear-gradient(135deg, #d7b56d, #6ea66a)",
+            color: "#08120b",
+            fontWeight: "700",
+            fontSize: "0.9rem",
+            cursor: "pointer"
+          }}
+        >
+          Save Changes
+        </button>
+        <button
+          onClick={() => setShowEditModal(false)}
+          style={{
+            padding: "10px 22px",
+            borderRadius: "8px",
+            border: "1px solid rgba(255,255,255,0.15)",
+            background: "rgba(255,255,255,0.07)",
+            color: "#eff6eb",
+            fontWeight: "600",
+            fontSize: "0.9rem",
+            cursor: "pointer"
+          }}
+        >
+          Close
+        </button>
+      </div>
     </div>
   </div>
 )}

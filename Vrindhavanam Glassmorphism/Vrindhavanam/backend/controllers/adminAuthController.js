@@ -31,6 +31,7 @@ async function login(req, res) {
         return res.json({
             success: true,
             token,
+            accessToken: token,
             admin: {
                 id: admin.id,
                 name: admin.name,

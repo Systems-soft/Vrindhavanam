@@ -34,14 +34,16 @@ const dashboardRouter = require('./routes/dashboardRoutes');
 const customerRouter = require('./routes/customerRoutes');
 const orderRouter = require('./routes/orderRoutes');
 const reportRouter = require('./routes/reportRoutes');
+const subscriptionRouter = require('./routes/subscriptionRoutes');
 
 app.use('/api/auth', authRouter);
-app.use('/api', apiRouter); // generic api router (if needed)
+
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/customers', customerRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/reports', reportRouter);
-
+app.use('/api/subscriptions', subscriptionRouter);
+app.use('/api', apiRouter); // generic api router (if needed)
 // Health check
 app.get('/', (req, res) => {
   res.json({ message: 'Vrindhavanam Admin API is running' });

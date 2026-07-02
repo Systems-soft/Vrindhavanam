@@ -17,7 +17,9 @@ module.exports = {
     const pendingOrders = await queryOne("SELECT COUNT(*) AS value FROM orders WHERE status = 'Pending'");
     const deliveredOrders = await queryOne("SELECT COUNT(*) AS value FROM orders WHERE status = 'Delivered'");
     const totalCustomers = await queryOne("SELECT COUNT(*) AS value FROM customers");
-    const activeSubscribers = { value: 0 };
+    const activeSubscribers = await queryOne(
+  "SELECT COUNT(*) AS value FROM subscriptions WHERE status='active'"
+);
     const lowStockProducts = await queryOne(
       "SELECT COUNT(*) AS value FROM products WHERE CAST(COALESCE(stock_status,'') AS CHAR) LIKE '%low%'",
     );
@@ -47,14 +49,13 @@ module.exports = {
        ORDER BY label ASC`,
     );
 
-    const [customerGrowth] = await pool.query(
-      `SELECT DATE(created_at) AS label, COUNT(*) AS value
-       FROM customers
-       WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-       GROUP BY DATE(created_at)
-       ORDER BY label ASC`,
-    );
-
+   const [customerGrowth] = await pool.query(
+  `SELECT DATE(created_at) AS label, COUNT(*) AS value
+   FROM customers
+   WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+   GROUP BY DATE(created_at)
+   ORDER BY label ASC`
+);
     const [productSales] = await pool.query(
       `SELECT product_name AS label, COALESCE(SUM(price),0) AS value
        FROM products
